@@ -2,12 +2,12 @@ package dev.pakh.logic;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.POINT;
 import com.sun.jna.win32.StdCallLibrary;
-import dev.pakh.state.WindowState;
+import dev.pakh.models.RectangleArea;
+import dev.pakh.models.WindowState;
 import dev.pakh.ui.MessageBox;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class WindowFinder {
             return null;
         }
 
-        return new WindowState(foundHWND, rect.left, rect.right, rect.top, rect.bottom);
+        return new WindowState(foundHWND, new RectangleArea(rect.left, rect.right, rect.top, rect.bottom));
     }
 
     public static RECT getWindowPosition(HWND hwnd) {

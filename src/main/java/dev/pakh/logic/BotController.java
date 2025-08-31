@@ -1,18 +1,39 @@
 package dev.pakh.logic;
 
-import dev.pakh.state.WindowState;
+import dev.pakh.logic.locators.CharacterCpLocator;
+import dev.pakh.logic.locators.CharacterHpLocator;
+import dev.pakh.logic.locators.CharacterInfoBoxLocator;
+import dev.pakh.models.ProgressBar;
+import dev.pakh.models.RectangleArea;
+import dev.pakh.models.WindowState;
+import dev.pakh.utils.ScreenshotUtils;
+
+import java.awt.image.BufferedImage;
 
 public class BotController {
     private WindowState windowState = null;
 
-    public void detectWindow() {
+    public Boolean detectWindow() {
         WindowState foundWindow = WindowFinder.find();
-        if (foundWindow != null)
-            windowState = foundWindow;
+        if (foundWindow == null) return false;
+        windowState = foundWindow;
 
-        ScreenGrabber.captureScreen(
-                windowState.getXStart(), windowState.getYStart(), windowState.getXEnd(), windowState.getYEnd()
-        );
+        BufferedImage image = ScreenshotUtils.capture(windowState.area(), "full-window");
+
+        RectangleArea characterInfoBoxArea = CharacterInfoBoxLocator.locate(image);
+        if (characterInfoBoxArea == null) return false;
+
+        ProgressBar characterHp = CharacterHpLocator.locate(characterInfoBoxArea);
+        if (characterHp == null) return false;
+
+        ProgressBar characterCp = CharacterCpLocator.locate(characterInfoBoxArea);
+        if (characterCp == null) return false;
+
+        // Detect chat area
+        // Detect skills position: Fishing, Pumping, Reeling
+        // Detect fishing shots position
+
+        return true;
     }
 
     public void startFishing() {

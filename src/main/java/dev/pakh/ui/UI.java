@@ -24,15 +24,23 @@ public class UI {
     }
 
     private void setupButtons(JFrame frame) {
-        JButton detectButton = createButton(frame,"Detect window", 10, 50, 130);
+        JButton detectButton = createButton(frame, "Detect window", 10, 50, 130);
         JButton exitButton = createButton(frame, "Exit", 10, 80, 130);
         JButton startButton = createButton(frame, "Start fishing", 149, 50, 100);
         JButton stopButton = createButton(frame, "Stop fishing", 149, 80, 100);
 
-        detectButton.addActionListener(e -> bot.detectWindow());
+        detectButton.addActionListener(e -> {
+            if (bot.detectWindow()) {
+                deactivateButton(detectButton);
+                activateButton(startButton);
+            }
+        });
         exitButton.addActionListener(e -> frame.dispose());
         startButton.addActionListener(e -> bot.startFishing());
         stopButton.addActionListener(e -> bot.stopFishing());
+
+        deactivateButton(startButton);
+        deactivateButton(stopButton);
     }
 
     private JFrame createFrame() {
@@ -61,5 +69,13 @@ public class UI {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void activateButton(JButton button) {
+        button.setEnabled(true);
+    }
+
+    private void deactivateButton(JButton button) {
+        button.setEnabled(false);
     }
 }

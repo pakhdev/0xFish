@@ -1,4 +1,4 @@
-package dev.pakh.scanners;
+package dev.pakh.logic.scanners;
 
 public class SkillCooldownScanner {
 }
