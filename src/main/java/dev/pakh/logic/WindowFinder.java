@@ -24,7 +24,7 @@ public class WindowFinder {
         RECT rect = getWindowPosition(foundHWND);
 
         if (rect == null) {
-            MessageBox.error("Error", "Can not get window position");
+            MessageBox.error("Can not get window position");
             return null;
         }
 
@@ -75,11 +75,11 @@ public class WindowFinder {
 
     private static void validateSingleWindow(List<HWND> windows) {
         if (windows.isEmpty()) {
-            MessageBox.error("Error", "Window not found");
+            MessageBox.error("Window not found");
             throw new RuntimeException("Window not found");
         }
         if (windows.size() > 1) {
-            MessageBox.error("Error", "More than one window found");
+            MessageBox.error("More than one window found");
             throw new RuntimeException("More than one window found");
         }
     }

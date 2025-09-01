@@ -1,4 +1,5 @@
 package dev.pakh.ui;
+
 import javax.swing.JOptionPane;
 
 public class MessageBox {
@@ -6,7 +7,7 @@ public class MessageBox {
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
     }
 
-    public static void error(String title, String message) {
-        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+    public static void error(String message) {
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }

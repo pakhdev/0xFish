@@ -9,13 +9,13 @@ import java.io.File;
 import java.io.IOException;
 
 public class ScreenshotUtils {
-    private static Boolean debugImages = true;
+    private static Boolean debugMode = true;
 
     public static BufferedImage capture(RectangleArea area, String name) {
         Rectangle captureRect = new Rectangle(area.startX(), area.startY(), area.width(), area.height());
         BufferedImage captured = doCapture(captureRect);
         BufferedImage image = normalizeImage(area, captured);
-        if (debugImages) saveImage(name, image);
+        if (debugMode) saveImage(name, image);
         return image;
     }
 
@@ -25,7 +25,7 @@ public class ScreenshotUtils {
 
         BufferedImage cropped = image.getSubimage(area.startX(), area.startY(), area.width(), area.height());
         BufferedImage copy = normalizeImage(area, cropped);
-        if (debugImages) saveImage(name, copy);
+        if (debugMode) saveImage(name, copy);
         return copy;
     }
 

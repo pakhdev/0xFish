@@ -6,6 +6,7 @@ import dev.pakh.logic.locators.CharacterInfoBoxLocator;
 import dev.pakh.models.ProgressBar;
 import dev.pakh.models.RectangleArea;
 import dev.pakh.models.WindowState;
+import dev.pakh.utils.PixelInspectionUtils;
 import dev.pakh.utils.ScreenshotUtils;
 
 import java.awt.image.BufferedImage;
@@ -20,14 +21,18 @@ public class BotController {
 
         BufferedImage image = ScreenshotUtils.capture(windowState.area(), "full-window");
 
+//        PixelInspectionUtils.printHexVerticalColors(image, 177, 0, 80);
+
         RectangleArea characterInfoBoxArea = CharacterInfoBoxLocator.locate(image);
         if (characterInfoBoxArea == null) return false;
 
-        ProgressBar characterHp = CharacterHpLocator.locate(characterInfoBoxArea);
-        if (characterHp == null) return false;
+        System.out.println("Result " + characterInfoBoxArea);
 
-        ProgressBar characterCp = CharacterCpLocator.locate(characterInfoBoxArea);
-        if (characterCp == null) return false;
+//        ProgressBar characterHp = CharacterHpLocator.locate(characterInfoBoxArea);
+//        if (characterHp == null) return false;
+//
+//        ProgressBar characterCp = CharacterCpLocator.locate(characterInfoBoxArea);
+//        if (characterCp == null) return false;
 
         // Detect chat area
         // Detect skills position: Fishing, Pumping, Reeling
