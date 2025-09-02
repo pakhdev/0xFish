@@ -24,13 +24,13 @@ public class UI {
     }
 
     private void setupButtons(JFrame frame) {
-        JButton detectButton = createButton(frame, "Detect window", 10, 50, 130);
+        JButton detectButton = createButton(frame, "Detect elements", 10, 50, 130);
         JButton exitButton = createButton(frame, "Exit", 10, 80, 130);
         JButton startButton = createButton(frame, "Start fishing", 149, 50, 100);
         JButton stopButton = createButton(frame, "Stop fishing", 149, 80, 100);
 
         detectButton.addActionListener(e -> {
-            if (bot.detectWindow()) {
+            if (bot.detectElements()) {
                 deactivateButton(detectButton);
                 activateButton(startButton);
             }
@@ -48,6 +48,7 @@ public class UI {
         frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
+        frame.setAlwaysOnTop(true);
         return frame;
     }
 

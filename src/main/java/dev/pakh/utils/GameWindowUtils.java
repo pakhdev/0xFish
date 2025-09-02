@@ -1,4 +1,4 @@
-package dev.pakh.logic;
+package dev.pakh.utils;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.User32;
@@ -7,43 +7,57 @@ import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.POINT;
 import com.sun.jna.win32.StdCallLibrary;
 import dev.pakh.models.RectangleArea;
-import dev.pakh.models.WindowState;
+import dev.pakh.models.GameWindow;
 import dev.pakh.ui.MessageBox;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class WindowFinder {
+public class GameWindowUtils {
 
-    public static WindowState find() {
+    private static final int SW_RESTORE = 9;
+
+    public static GameWindow find() {
         List<HWND> windows = findLineageWindows();
         validateSingleWindow(windows);
 
         HWND foundHWND = windows.getFirst();
-        RECT rect = getWindowPosition(foundHWND);
+        RectangleArea area = getWindowArea(foundHWND);
 
-        if (rect == null) {
+        if (area == null) {
             MessageBox.error("Can not get window position");
             return null;
         }
 
-        return new WindowState(foundHWND, new RectangleArea(rect.left, rect.right, rect.top, rect.bottom));
+        return new GameWindow(foundHWND, area);
     }
 
-    public static RECT getWindowPosition(HWND hwnd) {
+    public static boolean activateWindow(HWND hwnd) {
+        if (hwnd == null || isWindowActive(hwnd))
+            return false;
+        
+        User32Helper.INSTANCE.ShowWindow(hwnd, SW_RESTORE);
+        return User32Helper.INSTANCE.SetForegroundWindow(hwnd);
+    }
+
+
+    public static boolean isWindowActive(HWND hwnd) {
+        HWND foreground = User32Helper.INSTANCE.GetForegroundWindow();
+        return hwnd.equals(foreground);
+    }
+
+    private static RectangleArea getWindowArea(HWND hwnd) {
         RECT clientRect = getClientRect(hwnd);
         if (clientRect == null) return null;
 
         POINT topLeft = new POINT(clientRect.left, clientRect.top);
-        boolean success = MyUser32.INSTANCE.ClientToScreen(hwnd, topLeft);
+        boolean success = User32Helper.INSTANCE.ClientToScreen(hwnd, topLeft);
         if (!success) return null;
 
-        clientRect.left = topLeft.x;
-        clientRect.right = clientRect.right + clientRect.left;
-        clientRect.top = topLeft.y;
-        clientRect.bottom = clientRect.top + clientRect.bottom;
-        return clientRect;
+        int width = clientRect.right;
+        int height = clientRect.bottom;
+        return new RectangleArea(topLeft.x, topLeft.x + width, topLeft.y, topLeft.y + height);
     }
 
     private static RECT getClientRect(HWND hwnd) {
@@ -84,10 +98,16 @@ public class WindowFinder {
         }
     }
 
-    private interface MyUser32 extends StdCallLibrary {
-        MyUser32 INSTANCE = Native.load("user32", MyUser32.class);
+    private interface User32Helper extends StdCallLibrary {
+        User32Helper INSTANCE = Native.load("user32", User32Helper.class);
 
         boolean ClientToScreen(HWND hWnd, POINT point);
+
+        HWND GetForegroundWindow();
+
+        boolean SetForegroundWindow(HWND hWnd);
+
+        boolean ShowWindow(HWND hWnd, int nCmdShow);
     }
 
 }
