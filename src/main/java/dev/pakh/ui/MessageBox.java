@@ -1,6 +1,6 @@
 package dev.pakh.ui;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 public class MessageBox {
     public static void warning(String title, String message) {

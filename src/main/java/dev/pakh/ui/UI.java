@@ -30,11 +30,28 @@ public class UI {
         JButton stopButton = createButton(frame, "Stop fishing", 149, 80, 100);
 
         detectButton.addActionListener(e -> {
-            if (bot.detectElements()) {
-                deactivateButton(detectButton);
-                activateButton(startButton);
-            }
+            SwingWorker<Boolean, Void> worker = new SwingWorker<>() {
+                @Override
+                protected Boolean doInBackground() {
+                    return bot.detectElements();
+                }
+
+                @Override
+                protected void done() {
+                    try {
+                        boolean ok = get();
+                        if (ok) {
+                            deactivateButton(detectButton);
+                            activateButton(startButton);
+                        }
+                    } catch (Exception ex) {
+                        MessageBox.error("Error: " + ex.getMessage());
+                    }
+                }
+            };
+            worker.execute();
         });
+
         exitButton.addActionListener(e -> frame.dispose());
         startButton.addActionListener(e -> bot.startFishing());
         stopButton.addActionListener(e -> bot.stopFishing());
