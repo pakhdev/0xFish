@@ -1,5 +1,6 @@
 package dev.pakh.logic.locators;
 
+import dev.pakh.logic.signatures.SignaturesManager;
 import dev.pakh.models.CaptureProcessor;
 import dev.pakh.models.GameLayout;
 import dev.pakh.models.RectangleArea;
@@ -59,7 +60,7 @@ public class CharacterInfoBoxLocator extends CaptureProcessor {
     }
 
     private VerticalRange findLeftBorder(BufferedImage image) {
-        if (debugMode) System.out.println("# Searching left border");
+        if (debugMode) System.out.println("#Character info box: Searching left border");
         int currentSearchingPositionX = 0;
         int imageWidth = image.getWidth();
 
@@ -74,7 +75,8 @@ public class CharacterInfoBoxLocator extends CaptureProcessor {
             );
             if (foundPoint == null) break;
 
-            if (debugMode) System.out.println("Left border found at X:" + foundPoint.x + ", Y:" + foundPoint.y);
+            if (debugMode)
+                System.out.println("Character info box: Left border found at X:" + foundPoint.x + ", Y:" + foundPoint.y);
             currentSearchingPositionX = foundPoint.x + 1;
 
             if (matchesLeftBorderPattern(image, foundPoint))
@@ -83,15 +85,12 @@ public class CharacterInfoBoxLocator extends CaptureProcessor {
         return null;
     }
 
-    private Boolean matchesLeftBorderPattern(BufferedImage image, Point point) {
-        int x = point.x + 1;
-        String firstColor = PixelInspectionUtils.getHex(image, new Point(x, point.y - 1));
-        String secondColor = PixelInspectionUtils.getHex(image, new Point(x, point.y));
-
-        if (debugMode)
-            System.out.println("Validating left border pattern, first:" + firstColor + ", second:" + secondColor);
-
-        return "C7BFB0".equals(firstColor) && "C2B8A8".equals(secondColor);
+    private boolean matchesLeftBorderPattern(BufferedImage image, Point point) {
+        return PixelInspectionUtils.hasValidSignature(
+                image,
+                point,
+                SignaturesManager.find("CharacterInfoBoxLeftBorder")
+        );
     }
 
     private VerticalRange findRightBorder(BufferedImage image, VerticalRange leftBorderRange) {
@@ -116,18 +115,19 @@ public class CharacterInfoBoxLocator extends CaptureProcessor {
             currentSearchingPositionX = foundPoint.x + 1;
 
             if (matchesRightBorderPattern(image, foundPoint))
-                return new VerticalRange(foundPoint.x, foundPoint.y, foundPoint.y + VALID_LEFT_BORDER_HEIGHT - 1);
+                return new VerticalRange(
+                        foundPoint.x,
+                        foundPoint.y,
+                        foundPoint.y + VALID_LEFT_BORDER_HEIGHT - 1);
         }
         return null;
     }
 
-    private Boolean matchesRightBorderPattern(BufferedImage image, Point point) {
-        String firstColor = PixelInspectionUtils.getHex(image, new Point(point.x, 7));
-        String secondColor = PixelInspectionUtils.getHex(image, new Point(point.x, 8));
-
-        if (debugMode)
-            System.out.println("Validating right border pattern, first:" + firstColor + ", second:" + secondColor);
-
-        return "B7B5A6".equals(firstColor) && "938973".equals(secondColor);
+    private boolean matchesRightBorderPattern(BufferedImage image, Point point) {
+        return PixelInspectionUtils.hasValidSignature(
+                image,
+                point,
+                SignaturesManager.find("CharacterInfoBoxRightBorder")
+        );
     }
 }

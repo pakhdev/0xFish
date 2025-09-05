@@ -77,7 +77,7 @@ public class CaptureDispatcher {
 
         BufferedImage fullScreenshot = ScreenshotUtils.capture(gameWindow.getArea(), "full-screen");
 
-        for (Map.Entry<CaptureProcessor, Boolean> entry : subscribers.entrySet()) {
+        for (Map.Entry<CaptureProcessor, Boolean> entry : new ArrayList<>(subscribers.entrySet())) {
             CaptureProcessor captureProcessor = entry.getKey();
             Boolean runOnce = entry.getValue();
             RectangleArea captureArea = captureProcessor.captureArea();

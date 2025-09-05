@@ -1,8 +1,12 @@
 package dev.pakh.utils;
 
+import dev.pakh.logic.signatures.models.ColorPoint;
+import dev.pakh.logic.signatures.models.ElementVisualSignature;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class PixelInspectionUtils {
     private static Boolean debugMode = true;
@@ -20,6 +24,7 @@ public class PixelInspectionUtils {
 
         int y = point.y;
         for (int x = point.x; x <= limitX; x++) {
+            System.out.println("X:" + x + " Y:" + y);
             if (hasValidColors(image, new Point(x, y), validColors)) {
                 if (!isValidHeight(image, new Point(x, y), validColors, requiredHeight))
                     continue;
@@ -32,6 +37,22 @@ public class PixelInspectionUtils {
             }
         }
         return null;
+    }
+
+    public static boolean hasValidSignature(BufferedImage image, Point point, ElementVisualSignature visualSignature) {
+        if (debugMode) System.out.printf("# Validating signature for %s%n", visualSignature.name());
+        for (ColorPoint colorPoint : visualSignature.signature()) {
+            int x = point.x + (int) colorPoint.offset().getX();
+            int y = point.y + (int) colorPoint.offset().getY();
+            String foundColor = getHex(image, new Point(x, y));
+            if (debugMode)
+                System.out.printf(
+                        "Validating point color at X: %d, Y: %d. Target: %s, found: %s%n",
+                        x, y, colorPoint.hexColor(), foundColor
+                );
+            if (!Objects.equals(colorPoint.hexColor(), foundColor)) return false;
+        }
+        return true;
     }
 
     // Проверить

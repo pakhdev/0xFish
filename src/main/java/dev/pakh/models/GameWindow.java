@@ -16,14 +16,14 @@ public class GameWindow {
     private final int WINDOW_ACTIVATION_TIMEOUT_MS = 10000;
     private final int WINDOW_ACTIVATION_CHECK_INTERVAL_MS = 100;
 
-    public HWND hwnd = null;
-    public RectangleArea area = null;
+    private HWND hwnd = null;
+    private RectangleArea area = null;
 
     public GameWindow identify() {
         List<HWND> windows = findLineageWindows();
         validateSingleWindow(windows);
 
-        HWND foundHWND = windows.getFirst();
+        HWND foundHWND = windows.get(0);
         RectangleArea area = getWindowArea(foundHWND);
 
         if (area == null)
