@@ -9,6 +9,8 @@ public class SignaturesManager {
     private static final List<ElementVisualSignature> SIGNATURES = List.of(
             new CharacterInfoBoxLeftBorderSignature().get(),
             new CharacterInfoBoxRightBorderSignature().get(),
+            new ChatBottomSignature().get(),
+            new ChatArrowUpBoxSignature().get(),
             new SkillsPanelLeftBorderBottomSignature().get(),
             new SkillsPanelLeftBorderSignature().get(),
             new FishingSignature().get(),

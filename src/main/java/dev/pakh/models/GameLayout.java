@@ -4,12 +4,14 @@ public class GameLayout {
     // --- Detected at startup ---
     private RectangleArea characterInfoBoxArea;
     private RectangleArea chatArea;
-    private RectangleArea skillFishingArea;
-    private RectangleArea skillPumpingArea;
-    private RectangleArea skillReelingArea;
-    private RectangleArea skillNextTargetArea;
-    private RectangleArea skillWolfAttackArea;
     private RectangleArea fishingShotArea;
+
+    private int FishingKeyCode;
+    private int PumpingKeyCode;
+    private int ReelingKeyCode;
+    private int NextTargetKeyCode;
+    private int PetAttackKeyCode;
+    private int PetPickupKeyCode;
 
     // --- Detected during events ---
     private RectangleArea fishingInfoBoxArea;
@@ -17,14 +19,15 @@ public class GameLayout {
 
     // --- Validations ---
     public boolean areStartupAreasReady() {
-        return characterInfoBoxArea != null;
-//                && chatArea != null
-//                && skillFishingArea != null
-//                && skillPumpingArea != null
-//                && skillReelingArea != null
-//                && skillNextTargetArea != null
-//                && skillWolfAttackArea != null
-//                && fishingShotArea != null;
+        return characterInfoBoxArea != null
+                && chatArea != null
+                && fishingShotArea != null
+                && FishingKeyCode != 0
+                && PumpingKeyCode != 0
+                && ReelingKeyCode != 0
+                && NextTargetKeyCode != 0
+                && PetAttackKeyCode != 0
+                && PetPickupKeyCode != 0;
     }
 
     public boolean isMonsterHpBarDetected() {
@@ -44,24 +47,28 @@ public class GameLayout {
         return chatArea;
     }
 
-    public RectangleArea getSkillFishingArea() {
-        return skillFishingArea;
+    public int getFishingKeyCode() {
+        return FishingKeyCode;
     }
 
-    public RectangleArea getSkillPumpingArea() {
-        return skillPumpingArea;
+    public int getPumpingKeyCode() {
+        return PumpingKeyCode;
     }
 
-    public RectangleArea getSkillReelingArea() {
-        return skillReelingArea;
+    public int getReelingKeyCode() {
+        return ReelingKeyCode;
     }
 
-    public RectangleArea getSkillNextTargetArea() {
-        return skillNextTargetArea;
+    public int getNextTargetKeyCode() {
+        return NextTargetKeyCode;
     }
 
-    public RectangleArea getSkillWolfAttackArea() {
-        return skillWolfAttackArea;
+    public int getPetAttackKeyCode() {
+        return PetAttackKeyCode;
+    }
+
+    public int getPetPickupKeyCode() {
+        return PetPickupKeyCode;
     }
 
     public RectangleArea getFishingShotArea() {
@@ -85,24 +92,28 @@ public class GameLayout {
         this.chatArea = chatArea;
     }
 
-    public void setSkillFishingArea(RectangleArea skillFishingArea) {
-        this.skillFishingArea = skillFishingArea;
+    public void setFishingKeyCode(int fishingKeyCode) {
+        FishingKeyCode = fishingKeyCode;
     }
 
-    public void setSkillPumpingArea(RectangleArea skillPumpingArea) {
-        this.skillPumpingArea = skillPumpingArea;
+    public void setPumpingKeyCode(int pumpingKeyCode) {
+        PumpingKeyCode = pumpingKeyCode;
     }
 
-    public void setSkillReelingArea(RectangleArea skillReelingArea) {
-        this.skillReelingArea = skillReelingArea;
+    public void setReelingKeyCode(int reelingKeyCode) {
+        ReelingKeyCode = reelingKeyCode;
     }
 
-    public void setSkillNextTargetArea(RectangleArea skillNextTargetArea) {
-        this.skillNextTargetArea = skillNextTargetArea;
+    public void setNextTargetKeyCode(int nextTargetKeyCode) {
+        NextTargetKeyCode = nextTargetKeyCode;
     }
 
-    public void setSkillWolfAttackArea(RectangleArea skillWolfAttackArea) {
-        this.skillWolfAttackArea = skillWolfAttackArea;
+    public void setPetAttackKeyCode(int petAttackKeyCode) {
+        PetAttackKeyCode = petAttackKeyCode;
+    }
+
+    public void setPetPickupKeyCode(int petAttackKeyCode) {
+        PetPickupKeyCode = petAttackKeyCode;
     }
 
     public void setFishingShotArea(RectangleArea fishingShotArea) {
