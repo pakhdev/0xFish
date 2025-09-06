@@ -12,52 +12,12 @@ public class KeyPressUtils {
     public KeyPressUtils() throws AWTException {
     }
 
-    public void pressF1() {
-        pressKey(KeyEvent.VK_F1);
-    }
-
-    public void pressF2() {
-        pressKey(KeyEvent.VK_F2);
-    }
-
-    public void pressF3() {
-        pressKey(KeyEvent.VK_F3);
-    }
-
-    public void pressF4() {
-        pressKey(KeyEvent.VK_F4);
-    }
-
-    public void pressF5() {
-        pressKey(KeyEvent.VK_F5);
-    }
-
-    public void pressF6() {
-        pressKey(KeyEvent.VK_F6);
-    }
-
-    public void pressF7() {
-        pressKey(KeyEvent.VK_F7);
-    }
-
-    public void pressF8() {
-        pressKey(KeyEvent.VK_F8);
-    }
-
-    public void pressF9() {
-        pressKey(KeyEvent.VK_F9);
-    }
-
-    public void pressF10() {
-        pressKey(KeyEvent.VK_F10);
-    }
-
-    public void pressF11() {
-        pressKey(KeyEvent.VK_F11);
-    }
-
-    public void pressF12() {
-        pressKey(KeyEvent.VK_F12);
+    public void pressF(int number) {
+        if (number < 1 || number > 12) {
+            throw new IllegalArgumentException("Function key must be between 1 and 12");
+        }
+        int keyCode = KeyEvent.VK_F1 + (number - 1);
+        pressKey(keyCode);
     }
 
     public void pressKey(int keyCode) {
