@@ -11,6 +11,32 @@ import java.util.Objects;
 public class PixelInspectionUtils {
     private static Boolean debugMode = true;
 
+    public static Point findValidElementLeft(
+            BufferedImage image,
+            Point point,
+            String[] validColors,
+            int limitX,
+            int requiredWidth,
+            int requiredHeight
+    ) {
+        if (debugMode)
+            System.out.println("Searching valid element left, X:" + point.x + ", Y:" + point.y + ", limitX:" + limitX);
+
+        int y = point.y;
+        for (int x = point.x; x >= limitX; x--) {
+            if (hasValidColors(image, new Point(x, y), validColors)) {
+                if (!isValidHeight(image, new Point(x, y), validColors, requiredHeight))
+                    continue;
+
+                if (!isValidWidth(image, new Point(x, y), validColors, requiredWidth))
+                    continue;
+
+                return new Point(x, y);
+            }
+        }
+        return null;
+    }
+
     public static Point findValidElementRight(
             BufferedImage image,
             Point point,
@@ -24,7 +50,33 @@ public class PixelInspectionUtils {
 
         int y = point.y;
         for (int x = point.x; x <= limitX; x++) {
-            System.out.println("X:" + x + " Y:" + y);
+            if (hasValidColors(image, new Point(x, y), validColors)) {
+                if (!isValidHeight(image, new Point(x, y), validColors, requiredHeight))
+                    continue;
+
+                if (!isValidWidth(image, new Point(x, y), validColors, requiredWidth))
+                    continue;
+
+                int topYCoord = countConsecutiveValidPixelsUp(image, new Point(x, y), requiredHeight, validColors);
+                return new Point(x, (y - topYCoord));
+            }
+        }
+        return null;
+    }
+
+    public static Point findValidElementUp(
+            BufferedImage image,
+            Point point,
+            String[] validColors,
+            int limitY,
+            int requiredWidth,
+            int requiredHeight
+    ) {
+        if (debugMode)
+            System.out.println("Searching valid element up, X:" + point.x + ", Y:" + point.y + ", limitY:" + limitY);
+
+        int x = point.x;
+        for (int y = point.y; x <= limitY; y--) {
             if (hasValidColors(image, new Point(x, y), validColors)) {
                 if (!isValidHeight(image, new Point(x, y), validColors, requiredHeight))
                     continue;

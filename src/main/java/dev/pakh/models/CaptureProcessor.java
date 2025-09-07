@@ -7,7 +7,7 @@ public abstract class CaptureProcessor {
     protected int getTimeoutMs = 0;
     private Long lastRunTime = 0L;
 
-    public abstract void process(BufferedImage image);
+    public abstract void process(BufferedImage image) throws Exception;
 
     public boolean shouldRunNow() {
         long now = System.currentTimeMillis();

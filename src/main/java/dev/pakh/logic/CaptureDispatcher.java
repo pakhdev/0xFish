@@ -41,7 +41,7 @@ import java.util.concurrent.Future;
 public class CaptureDispatcher {
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final Map<CaptureProcessor, Boolean> subscribers = new HashMap<>();
-    private final GameWindow gameWindow = new GameWindow();
+    public final GameWindow gameWindow = new GameWindow();
 
     /**
      * Initializes the dispatcher by locating the game window.

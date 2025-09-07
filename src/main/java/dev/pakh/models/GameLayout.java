@@ -1,6 +1,8 @@
 package dev.pakh.models;
 
 public class GameLayout {
+    boolean debugMode = true;
+
     // --- Detected at startup ---
     private RectangleArea characterInfoBoxArea;
     private RectangleArea chatArea;
@@ -19,6 +21,18 @@ public class GameLayout {
 
     // --- Validations ---
     public boolean areStartupAreasReady() {
+        if (debugMode) {
+            System.out.println("characterInfoBoxArea: " + (characterInfoBoxArea != null));
+            System.out.println("chatArea: " + (chatArea != null));
+            System.out.println("fishingShotArea: " + (fishingShotArea != null));
+            System.out.println("FishingKeyCode: " + (FishingKeyCode != 0));
+            System.out.println("PumpingKeyCode: " + (PumpingKeyCode != 0));
+            System.out.println("ReelingKeyCode: " + (ReelingKeyCode != 0));
+            System.out.println("NextTargetKeyCode: " + (NextTargetKeyCode != 0));
+            System.out.println("PetAttackKeyCode: " + (PetAttackKeyCode != 0));
+            System.out.println("PetPickupKeyCode: " + (PetPickupKeyCode != 0));
+        }
+
         return characterInfoBoxArea != null
                 && chatArea != null
                 && fishingShotArea != null
