@@ -32,7 +32,7 @@ public class UI {
         detectButton.addActionListener(e -> {
             SwingWorker<Boolean, Void> worker = new SwingWorker<>() {
                 @Override
-                protected Boolean doInBackground() {
+                protected Boolean doInBackground() throws Exception {
                     return bot.detectElements();
                 }
 
@@ -51,10 +51,34 @@ public class UI {
             };
             worker.execute();
         });
-
         exitButton.addActionListener(e -> frame.dispose());
-        startButton.addActionListener(e -> bot.startFishing());
-        stopButton.addActionListener(e -> bot.stopFishing());
+        startButton.addActionListener(e -> {
+            SwingWorker<Boolean, Void> worker = new SwingWorker<>() {
+                @Override
+                protected Boolean doInBackground() throws Exception {
+                    return bot.startFishing();
+                }
+
+                @Override
+                protected void done() {
+                    try {
+                        boolean ok = get();
+                        if (ok) {
+                            deactivateButton(startButton);
+                            activateButton(stopButton);
+                        }
+                    } catch (Exception ex) {
+                        MessageBox.error("Error: " + ex.getMessage());
+                    }
+                }
+            };
+            worker.execute();
+        });
+        stopButton.addActionListener(e -> {
+            deactivateButton(stopButton);
+            activateButton(startButton);
+            bot.stopFishing();
+        });
 
         deactivateButton(startButton);
         deactivateButton(stopButton);

@@ -17,22 +17,33 @@ public class CharacterCpHandler extends CaptureProcessor {
     private final int CP_TOP_OFFSET = 31;
     private final String[] CP_BAR_VALID_COLORS = {"794A00", "885A00"};
 
+    private final GameLayout gameLayout;
     private HorizontalRange cpRange;
     private int cpPosition;
     private boolean cpPositionInitialized = false;
 
-    public CharacterCpHandler(GameLayout gameLayout, BufferedImage image) {
-        cpRange = this.computeCpRange(gameLayout);
-        cpPosition = locateCpPosition(image);
-        cpPositionInitialized = true;
+    public CharacterCpHandler(GameLayout gameLayout) {
+        this.gameLayout = gameLayout;
     }
 
     @Override
     public void process(BufferedImage image) throws Exception {
+        if (!cpPositionInitialized) {
+            cpRange = this.computeCpRange(gameLayout);
+            cpPosition = locateCpPosition(image);
+            cpPositionInitialized = true;
+            return;
+        }
+
         int newPosition = locateCpPosition(image);
         if (newPosition < cpPosition)
             SoundUtils.danger();
         cpPosition = newPosition;
+    }
+
+    @Override
+    protected int getTimeoutMs() {
+        return 1000;
     }
 
     private HorizontalRange computeCpRange(GameLayout gameLayout) {

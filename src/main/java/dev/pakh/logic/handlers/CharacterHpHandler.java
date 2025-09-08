@@ -10,6 +10,7 @@ import dev.pakh.utils.SoundUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.time.LocalDateTime;
 
 public class CharacterHpHandler extends CaptureProcessor {
     private final int HP_LEFT_OFFSET = 19;
@@ -17,22 +18,35 @@ public class CharacterHpHandler extends CaptureProcessor {
     private final int HP_TOP_OFFSET = 44;
     private final String[] HP_BAR_VALID_COLORS = {"6B170D", "791C11"};
 
+    private final GameLayout gameLayout;
     private HorizontalRange hpRange;
     private int hpPosition;
     private boolean hpPositionInitialized = false;
 
-    public CharacterHpHandler(GameLayout gameLayout, BufferedImage image) {
-        hpRange = this.computeHpRange(gameLayout);
-        hpPosition = locateHpPosition(image);
-        hpPositionInitialized = true;
+    public CharacterHpHandler(GameLayout gameLayout) {
+        this.gameLayout = gameLayout;
     }
 
     @Override
     public void process(BufferedImage image) throws Exception {
+        if (!hpPositionInitialized) {
+            System.out.println("[" + LocalDateTime.now() + "] Initing HP");
+            hpRange = this.computeHpRange(gameLayout);
+            hpPosition = locateHpPosition(image);
+            hpPositionInitialized = true;
+            return;
+        }
+
+        System.out.println("[" + LocalDateTime.now() + "] Processing HP");
         int newPosition = locateHpPosition(image);
         if (newPosition < hpPosition)
             SoundUtils.danger();
         hpPosition = newPosition;
+    }
+
+    @Override
+    protected int getTimeoutMs() {
+        return 1000;
     }
 
     private HorizontalRange computeHpRange(GameLayout gameLayout) {

@@ -6,14 +6,17 @@ import java.awt.image.BufferedImage;
 
 public abstract class CaptureProcessor {
 
-    protected int getTimeoutMs = 0;
     private Long lastRunTime = 0L;
 
     public abstract void process(BufferedImage image) throws Exception;
 
+    protected int getTimeoutMs() {
+        return 0;
+    }
+
     public boolean shouldRunNow() {
         long now = System.currentTimeMillis();
-        return (now - lastRunTime) >= getTimeoutMs;
+        return (now - lastRunTime) >= getTimeoutMs();
     }
 
     public RectangleArea captureArea() {
