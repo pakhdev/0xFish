@@ -1,8 +1,8 @@
 package dev.pakh.logic;
 
-import dev.pakh.models.GameWindow;
-import dev.pakh.models.CaptureProcessor;
-import dev.pakh.models.RectangleArea;
+import dev.pakh.models.game.GameWindow;
+import dev.pakh.models.capture.CaptureProcessor;
+import dev.pakh.models.geometry.RectangleArea;
 import dev.pakh.utils.ScreenshotUtils;
 
 import java.awt.image.BufferedImage;

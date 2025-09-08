@@ -1,6 +1,10 @@
 package dev.pakh.logic.handlers;
 
-import dev.pakh.models.*;
+import dev.pakh.models.capture.CaptureProcessor;
+import dev.pakh.models.game.GameLayout;
+import dev.pakh.models.geometry.Direction;
+import dev.pakh.models.geometry.HorizontalRange;
+import dev.pakh.models.geometry.RectangleArea;
 import dev.pakh.utils.PixelInspectionUtils;
 import dev.pakh.utils.SoundUtils;
 

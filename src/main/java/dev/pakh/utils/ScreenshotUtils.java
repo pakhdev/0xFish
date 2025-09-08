@@ -1,6 +1,6 @@
 package dev.pakh.utils;
 
-import dev.pakh.models.RectangleArea;
+import dev.pakh.models.geometry.RectangleArea;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

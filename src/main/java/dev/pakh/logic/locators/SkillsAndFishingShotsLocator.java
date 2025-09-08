@@ -1,10 +1,15 @@
 package dev.pakh.logic.locators;
 
 import dev.pakh.logic.signatures.SignaturesManager;
-import dev.pakh.logic.signatures.entries.FishingSignature;
-import dev.pakh.logic.signatures.models.ColorPoint;
 import dev.pakh.logic.signatures.models.ElementVisualSignature;
-import dev.pakh.models.*;
+import dev.pakh.models.capture.CaptureProcessor;
+import dev.pakh.models.game.GameLayout;
+import dev.pakh.models.geometry.RectangleArea;
+import dev.pakh.models.geometry.VerticalRange;
+import dev.pakh.models.skills.AlwaysReadyCondition;
+import dev.pakh.models.skills.CooldownCondition;
+import dev.pakh.models.skills.Skill;
+import dev.pakh.models.skills.SkillCondition;
 import dev.pakh.ui.MessageBox;
 import dev.pakh.utils.PixelInspectionUtils;
 
@@ -12,6 +17,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SkillsAndFishingShotsLocator extends CaptureProcessor {
     private final Boolean debugMode = true;
@@ -39,7 +45,7 @@ public class SkillsAndFishingShotsLocator extends CaptureProcessor {
     }
 
     @Override
-    public void process(BufferedImage image) {
+    public void process(BufferedImage image) throws AWTException {
         List<VerticalRange> skillsPanels = new ArrayList<>();
 
         VerticalRange leftBorderRange = findLeftBorder(image);
@@ -145,44 +151,13 @@ public class SkillsAndFishingShotsLocator extends CaptureProcessor {
         return panels.get(panels.size() - 1);
     }
 
-    private SkillsAndFishingShotsLocator findSkills(BufferedImage image, VerticalRange panelLeftBorder) {
-        int fishingKeyCode = findSkillSlotOnPanel(image, panelLeftBorder, SignaturesManager.find("Fishing"));
-        if (fishingKeyCode == 0)
-            System.out.println("Fishing skill not found");
-        else
-            gameLayout.setFishingKeyCode(fishingKeyCode);
-
-        int pumpingKeyCode = findSkillSlotOnPanel(image, panelLeftBorder, SignaturesManager.find("Pumping"));
-        if (pumpingKeyCode == 0)
-            System.out.println("Pumping skill not found");
-        else
-            gameLayout.setPumpingKeyCode(pumpingKeyCode);
-
-        int reelingKeyCode = findSkillSlotOnPanel(image, panelLeftBorder, SignaturesManager.find("Reeling"));
-        if (reelingKeyCode == 0)
-            System.out.println("Reeling skill not found");
-        else
-            gameLayout.setReelingKeyCode(reelingKeyCode);
-
-        int nextTargetKeyCode = findSkillSlotOnPanel(image, panelLeftBorder, SignaturesManager.find("NextTarget"));
-        if (nextTargetKeyCode == 0)
-            System.out.println("NextTarget skill not found");
-        else
-            gameLayout.setNextTargetKeyCode(nextTargetKeyCode);
-
-        int petAttackKeyCode = findSkillSlotOnPanel(image, panelLeftBorder, SignaturesManager.find("PetAttack"));
-        if (petAttackKeyCode == 0)
-            System.out.println("PetAttack skill not found");
-        else
-            gameLayout.setPetAttackKeyCode(petAttackKeyCode);
-
-        int petPickupKeyCode = findSkillSlotOnPanel(image, panelLeftBorder, SignaturesManager.find("PetPickup"));
-        if (petPickupKeyCode == 0)
-            System.out.println("PetPickup skill not found");
-        else
-            gameLayout.setPetPickupKeyCode(petPickupKeyCode);
-
-
+    private SkillsAndFishingShotsLocator findSkills(BufferedImage image, VerticalRange panelLeftBorder) throws AWTException {
+        initSkill(image, panelLeftBorder, "Fishing", false, gameLayout::setFishingSkill);
+        initSkill(image, panelLeftBorder, "Pumping", true, gameLayout::setPumpingSkill);
+        initSkill(image, panelLeftBorder, "Reeling", true, gameLayout::setReelingSkill);
+        initSkill(image, panelLeftBorder, "NextTarget", false, gameLayout::setNextTargetSkill);
+        initSkill(image, panelLeftBorder, "PetAttack", false, gameLayout::setPetAttackSkill);
+        initSkill(image, panelLeftBorder, "PetPickup", false, gameLayout::setPetPickupSkill);
         return this;
     }
 
@@ -195,22 +170,13 @@ public class SkillsAndFishingShotsLocator extends CaptureProcessor {
         );
 
         for (VerticalRange panelLeftBorder : skillsPanels) {
-            int skillSlot = 0;
-
             for (String signatureName : signatures) {
-                skillSlot = findSkillSlotOnPanel(image, panelLeftBorder, SignaturesManager.find(signatureName));
-                if (skillSlot != 0) break;
-            }
-
-            if (skillSlot != 0) {
-                int xStart = getPanelSlotXPosition(panelLeftBorder, skillSlot);
-                int yStart = panelLeftBorder.startY() + SKILL_ICON_PANEL_OFFSET_Y;
-                gameLayout.setFishingShotArea(new RectangleArea(
-                        xStart,
-                        xStart + SKILL_ICON_SIZE - 1,
-                        yStart,
-                        yStart + SKILL_ICON_SIZE - 1
-                ));
+                int slotNumber = findSkillSlotOnPanel(image, panelLeftBorder, SignaturesManager.find(signatureName));
+                if (slotNumber != 0) {
+                    RectangleArea slotArea = getPanelSlotArea(panelLeftBorder, slotNumber);
+                    gameLayout.setFishingShotArea(slotArea);
+                    return this;
+                }
             }
         }
 
@@ -219,31 +185,62 @@ public class SkillsAndFishingShotsLocator extends CaptureProcessor {
 
     private int findSkillSlotOnPanel(BufferedImage image, VerticalRange panelLeftBorder,
                                      ElementVisualSignature visualSignature) {
-
         int totalSlots = PANEL_WIDTH / (SKILL_ICON_SIZE + DISTANCE_BETWEEN_SKILL_ICONS);
-        int y = panelLeftBorder.startY() + SKILL_ICON_PANEL_OFFSET_Y;
 
         for (int slot = 1; slot <= totalSlots; slot++) {
-            int x = getPanelSlotXPosition(panelLeftBorder, slot);
-
-            if (debugMode) System.out.println("Panel slot " + slot + " at x=" + x);
-
-            if (PixelInspectionUtils.hasValidSignature(image, new Point(x, y), visualSignature)) {
+            Point slotPosition = getPanelSlotPosition(panelLeftBorder, slot);
+            if (PixelInspectionUtils.hasValidSignature(image, slotPosition, visualSignature))
                 return slot;
-            }
         }
 
         return 0;
     }
 
-    private int getPanelSlotXPosition(VerticalRange panelLeftBorder, int targetSlotNumber) {
+    private Point getPanelSlotPosition(VerticalRange panelLeftBorder, int targetSlotNumber) {
+        // X
         int baseX = panelLeftBorder.x() + FIRST_SKILL_ICON_PANEL_OFFSET_X;
         int stepX = SKILL_ICON_SIZE + DISTANCE_BETWEEN_SKILL_ICONS;
-
         int slotsBefore = targetSlotNumber - 1;
         int extraGaps = slotsBefore / 4;
+        int x = baseX + slotsBefore * stepX + extraGaps * DISTANCE_BETWEEN_SKILL_ICONS_PLUS;
 
-        return baseX + slotsBefore * stepX + extraGaps * DISTANCE_BETWEEN_SKILL_ICONS_PLUS;
+        // Y
+        int y = panelLeftBorder.startY() + SKILL_ICON_PANEL_OFFSET_Y;
+        return new Point(x, y);
+    }
+
+    private RectangleArea getPanelSlotArea(VerticalRange panelLeftBorder, int targetSlotNumber) {
+        Point slotPosition = getPanelSlotPosition(panelLeftBorder, targetSlotNumber);
+        int xStart = (int) slotPosition.getX();
+        int yStart = (int) slotPosition.getY();
+        return new RectangleArea(
+                xStart,
+                xStart + SKILL_ICON_SIZE - 1,
+                yStart,
+                yStart + SKILL_ICON_SIZE - 1
+        );
+    }
+
+    private void initSkill(BufferedImage image,
+                           VerticalRange panel,
+                           String skillName,
+                           boolean hasCooldown,
+                           Consumer<Skill> setter) throws AWTException {
+
+        int keyCode = findSkillSlotOnPanel(image, panel, SignaturesManager.find(skillName));
+
+        if (keyCode == 0) {
+            System.out.println(skillName + " skill not found");
+            return;
+        }
+
+        SkillCondition condition = hasCooldown
+                ? new CooldownCondition(SignaturesManager.find(skillName + "Cooldown"),
+                getPanelSlotPosition(panel, keyCode))
+                : new AlwaysReadyCondition();
+
+        Skill skill = new Skill(keyCode, condition);
+        setter.accept(skill);
     }
 
 }

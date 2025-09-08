@@ -1,4 +1,8 @@
-package dev.pakh.models;
+package dev.pakh.models.game;
+
+import dev.pakh.models.geometry.HorizontalRange;
+import dev.pakh.models.geometry.RectangleArea;
+import dev.pakh.models.skills.Skill;
 
 public class GameLayout {
     boolean debugMode = true;
@@ -8,12 +12,12 @@ public class GameLayout {
     private RectangleArea chatArea;
     private RectangleArea fishingShotArea;
 
-    private int FishingKeyCode;
-    private int PumpingKeyCode;
-    private int ReelingKeyCode;
-    private int NextTargetKeyCode;
-    private int PetAttackKeyCode;
-    private int PetPickupKeyCode;
+    private Skill FishingSkill;
+    private Skill PumpingSkill;
+    private Skill ReelingSkill;
+    private Skill NextTargetSkill;
+    private Skill PetAttackSkill;
+    private Skill PetPickupSkill;
 
     // --- Detected during events ---
     private RectangleArea fishingInfoBoxArea;
@@ -25,23 +29,23 @@ public class GameLayout {
             System.out.println("characterInfoBoxArea: " + (characterInfoBoxArea != null));
             System.out.println("chatArea: " + (chatArea != null));
             System.out.println("fishingShotArea: " + (fishingShotArea != null));
-            System.out.println("FishingKeyCode: " + (FishingKeyCode != 0));
-            System.out.println("PumpingKeyCode: " + (PumpingKeyCode != 0));
-            System.out.println("ReelingKeyCode: " + (ReelingKeyCode != 0));
-            System.out.println("NextTargetKeyCode: " + (NextTargetKeyCode != 0));
-            System.out.println("PetAttackKeyCode: " + (PetAttackKeyCode != 0));
-            System.out.println("PetPickupKeyCode: " + (PetPickupKeyCode != 0));
+            System.out.println("Fishing skill: " + (FishingSkill != null));
+            System.out.println("Pumping skill: " + (PumpingSkill != null));
+            System.out.println("Reeling skill: " + (ReelingSkill != null));
+            System.out.println("NextTarget skill: " + (NextTargetSkill != null));
+            System.out.println("PetAttack skill: " + (PetAttackSkill != null));
+            System.out.println("PetPickup skill: " + (PetPickupSkill != null));
         }
 
         return characterInfoBoxArea != null
                 && chatArea != null
                 && fishingShotArea != null
-                && FishingKeyCode != 0
-                && PumpingKeyCode != 0
-                && ReelingKeyCode != 0
-                && NextTargetKeyCode != 0
-                && PetAttackKeyCode != 0
-                && PetPickupKeyCode != 0;
+                && FishingSkill != null
+                && PumpingSkill != null
+                && ReelingSkill != null
+                && NextTargetSkill != null
+                && PetAttackSkill != null
+                && PetPickupSkill != null;
     }
 
     public boolean isMonsterHpBarDetected() {
@@ -61,28 +65,28 @@ public class GameLayout {
         return chatArea;
     }
 
-    public int getFishingKeyCode() {
-        return FishingKeyCode;
+    public Skill getFishingSkill() {
+        return FishingSkill;
     }
 
-    public int getPumpingKeyCode() {
-        return PumpingKeyCode;
+    public Skill getPumpingSkill() {
+        return PumpingSkill;
     }
 
-    public int getReelingKeyCode() {
-        return ReelingKeyCode;
+    public Skill getReelingSkill() {
+        return ReelingSkill;
     }
 
-    public int getNextTargetKeyCode() {
-        return NextTargetKeyCode;
+    public Skill getNextTargetSkill() {
+        return NextTargetSkill;
     }
 
-    public int getPetAttackKeyCode() {
-        return PetAttackKeyCode;
+    public Skill getPetAttackSkill() {
+        return PetAttackSkill;
     }
 
-    public int getPetPickupKeyCode() {
-        return PetPickupKeyCode;
+    public Skill getPetPickupSkill() {
+        return PetPickupSkill;
     }
 
     public RectangleArea getFishingShotArea() {
@@ -106,28 +110,29 @@ public class GameLayout {
         this.chatArea = chatArea;
     }
 
-    public void setFishingKeyCode(int fishingKeyCode) {
-        FishingKeyCode = fishingKeyCode;
+    public void setFishingSkill(Skill fishingSkill) {
+        FishingSkill = fishingSkill;
     }
 
-    public void setPumpingKeyCode(int pumpingKeyCode) {
-        PumpingKeyCode = pumpingKeyCode;
+    public void setPumpingSkill(Skill pumpingSkill) {
+        PumpingSkill = pumpingSkill;
     }
 
-    public void setReelingKeyCode(int reelingKeyCode) {
-        ReelingKeyCode = reelingKeyCode;
+    public void setReelingSkill(Skill reelingSkill) {
+        ReelingSkill = reelingSkill;
     }
 
-    public void setNextTargetKeyCode(int nextTargetKeyCode) {
-        NextTargetKeyCode = nextTargetKeyCode;
+    public void setNextTargetSkill(Skill nextTargetSkill) {
+        NextTargetSkill = nextTargetSkill;
     }
 
-    public void setPetAttackKeyCode(int petAttackKeyCode) {
-        PetAttackKeyCode = petAttackKeyCode;
+    public void setPetAttackSkill(Skill petAttackSkill) {
+        PetAttackSkill = petAttackSkill;
+
     }
 
-    public void setPetPickupKeyCode(int petAttackKeyCode) {
-        PetPickupKeyCode = petAttackKeyCode;
+    public void setPetPickupSkill(Skill petAttackSkill) {
+        PetPickupSkill = petAttackSkill;
     }
 
     public void setFishingShotArea(RectangleArea fishingShotArea) {

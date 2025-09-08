@@ -1,4 +1,6 @@
-package dev.pakh.models;
+package dev.pakh.models.capture;
+
+import dev.pakh.models.geometry.RectangleArea;
 
 import java.awt.image.BufferedImage;
 

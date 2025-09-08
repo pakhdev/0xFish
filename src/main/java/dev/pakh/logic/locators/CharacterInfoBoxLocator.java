@@ -1,10 +1,10 @@
 package dev.pakh.logic.locators;
 
 import dev.pakh.logic.signatures.SignaturesManager;
-import dev.pakh.models.CaptureProcessor;
-import dev.pakh.models.GameLayout;
-import dev.pakh.models.RectangleArea;
-import dev.pakh.models.VerticalRange;
+import dev.pakh.models.capture.CaptureProcessor;
+import dev.pakh.models.game.GameLayout;
+import dev.pakh.models.geometry.RectangleArea;
+import dev.pakh.models.geometry.VerticalRange;
 import dev.pakh.ui.MessageBox;
 import dev.pakh.utils.PixelInspectionUtils;
 

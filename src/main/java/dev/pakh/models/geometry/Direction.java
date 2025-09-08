@@ -1,4 +1,4 @@
-package dev.pakh.models;
+package dev.pakh.models.geometry;
 
 public enum Direction {
     LEFT, RIGHT

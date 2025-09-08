@@ -1,4 +1,4 @@
-package dev.pakh.models;
+package dev.pakh.models.geometry;
 
 public record RectangleArea(int startX, int endX, int startY, int endY) {
     public int width() {
