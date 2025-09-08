@@ -30,14 +30,12 @@ public class CharacterHpHandler extends CaptureProcessor {
     @Override
     public void process(BufferedImage image) throws Exception {
         if (!hpPositionInitialized) {
-            System.out.println("[" + LocalDateTime.now() + "] Initing HP");
             hpRange = this.computeHpRange(gameLayout);
             hpPosition = locateHpPosition(image);
             hpPositionInitialized = true;
             return;
         }
 
-        System.out.println("[" + LocalDateTime.now() + "] Processing HP");
         int newPosition = locateHpPosition(image);
         if (newPosition < hpPosition)
             SoundUtils.danger();

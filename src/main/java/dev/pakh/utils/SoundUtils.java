@@ -4,16 +4,25 @@ import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class SoundUtils {
 
+    private static final AtomicBoolean isPlaying = new AtomicBoolean(false);
+
     public static void playSound(String path) {
-        try (AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(path))) {
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioIn);
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-        }
+        new Thread(() -> {
+            try (AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(path))) {
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                clip.start();
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private static void playTone(int[] freqs, int msecs) throws LineUnavailableException {
@@ -36,17 +45,41 @@ public class SoundUtils {
         }
     }
 
-
-    public static void danger() throws Exception {
-        for (int i = 0; i < 6; i++) {
-            playTone(new int[]{600}, 200);
-            playTone(new int[]{1200}, 200);
+    public static void danger() {
+        if (isPlaying.compareAndSet(false, true)) {
+            new Thread(() -> {
+                try {
+                    System.out.println("------ Danger called");
+                    for (int i = 0; i < 6; i++) {
+                        playTone(new int[]{600}, 200);
+                        playTone(new int[]{1200}, 200);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    isPlaying.set(false); // liberar flag
+                }
+            }).start();
+        } else {
+            System.out.println("------ Danger skipped (already playing)");
         }
     }
 
-    public static void message() throws Exception {
-        playTone(new int[]{1500}, 120);
-        Thread.sleep(80);
-        playTone(new int[]{1700}, 120);
+    public static void message() {
+        if (isPlaying.compareAndSet(false, true)) {
+            new Thread(() -> {
+                try {
+                    playTone(new int[]{1500}, 120);
+                    Thread.sleep(80);
+                    playTone(new int[]{1700}, 120);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    isPlaying.set(false);
+                }
+            }).start();
+        } else {
+            System.out.println("------ Message skipped (already playing)");
+        }
     }
 }

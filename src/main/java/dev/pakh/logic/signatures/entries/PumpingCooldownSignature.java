@@ -6,7 +6,6 @@ import dev.pakh.logic.signatures.models.SignatureEntry;
 
 import java.util.List;
 
-// TODO: SET CORRECT COLORS
 public class PumpingCooldownSignature extends SignatureEntry {
     @Override
     public ElementVisualSignature get() {

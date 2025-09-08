@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class ScreenshotUtils {
-    private static Boolean debugMode = true;
+    private static Boolean debugMode = false;
 
     public static BufferedImage capture(RectangleArea area, String name) {
         Rectangle captureRect = new Rectangle(area.startX(), area.startY(), area.width(), area.height());
