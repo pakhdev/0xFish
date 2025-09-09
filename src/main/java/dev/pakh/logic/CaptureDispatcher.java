@@ -88,7 +88,6 @@ public class CaptureDispatcher {
             Future<?> future = executor.submit(() -> {
                 try {
                     captureProcessor.process(inputImage);
-                    captureProcessor.updateLastRunTime();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

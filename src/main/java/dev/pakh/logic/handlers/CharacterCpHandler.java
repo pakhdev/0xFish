@@ -42,8 +42,8 @@ public class CharacterCpHandler extends CaptureProcessor {
     }
 
     @Override
-    protected int getTimeoutMs() {
-        return 1000;
+    protected int getTimeoutTicks() {
+        return 20;
     }
 
     private HorizontalRange computeCpRange(GameLayout gameLayout) {

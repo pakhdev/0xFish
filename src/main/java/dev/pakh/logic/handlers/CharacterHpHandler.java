@@ -43,7 +43,7 @@ public class CharacterHpHandler extends CaptureProcessor {
     }
 
     @Override
-    protected int getTimeoutMs() {
+    protected int getTimeoutTicks() {
         return 1000;
     }
 
