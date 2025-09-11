@@ -1,6 +1,6 @@
 package dev.pakh.logic.locators;
 
-import dev.pakh.logic.signatures.SignaturesManager;
+import dev.pakh.logic.signatures.ElementSignaturesManager;
 import dev.pakh.models.capture.CaptureProcessor;
 import dev.pakh.models.game.GameLayout;
 import dev.pakh.models.geometry.RectangleArea;
@@ -89,7 +89,7 @@ public class CharacterInfoBoxLocator extends CaptureProcessor {
         return PixelInspectionUtils.hasValidSignature(
                 image,
                 point,
-                SignaturesManager.find("CharacterInfoBoxLeftBorder")
+                ElementSignaturesManager.find("CharacterInfoBoxLeftBorder")
         );
     }
 
@@ -127,7 +127,7 @@ public class CharacterInfoBoxLocator extends CaptureProcessor {
         return PixelInspectionUtils.hasValidSignature(
                 image,
                 point,
-                SignaturesManager.find("CharacterInfoBoxRightBorder")
+                ElementSignaturesManager.find("CharacterInfoBoxRightBorder")
         );
     }
 }

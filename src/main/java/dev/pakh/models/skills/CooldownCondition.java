@@ -1,6 +1,6 @@
 package dev.pakh.models.skills;
 
-import dev.pakh.logic.signatures.models.ElementVisualSignature;
+import dev.pakh.models.signatures.ElementVisualSignature;
 import dev.pakh.utils.PixelInspectionUtils;
 
 import java.awt.*;

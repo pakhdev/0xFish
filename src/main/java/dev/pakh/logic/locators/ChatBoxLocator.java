@@ -1,6 +1,6 @@
 package dev.pakh.logic.locators;
 
-import dev.pakh.logic.signatures.SignaturesManager;
+import dev.pakh.logic.signatures.ElementSignaturesManager;
 import dev.pakh.models.capture.CaptureProcessor;
 import dev.pakh.models.game.GameLayout;
 import dev.pakh.models.geometry.RectangleArea;
@@ -11,11 +11,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class ChatBoxLocator extends CaptureProcessor {
+    private final boolean debugMode = true;
     private final GameLayout gameLayout;
-    private final int BOTTOM_IDENTIFICATION_HEIGHT = 81;
+    private final int BOTTOM_IDENTIFICATION_HEIGHT = 82;
     private final int CHAT_WIDTH = 315;
     private final int CHAT_LEFT_OFFSET = 5;
-    private final int CHAT_BOTTOM_OFFSET = 51;
+    private final int CHAT_BOTTOM_OFFSET = 50;
     private final int SCROLLBAR_WIDTH = 14;
     private final int SCROLLBAR_MIN_HEIGHT = 14;
     private final int SCROLLBAR_MAX_HEIGHT = 400;
@@ -42,7 +43,6 @@ public class ChatBoxLocator extends CaptureProcessor {
         }
 
         VerticalRange scrollbarRange = findScrollbarRange(image);
-        System.out.println("ScrollBar range " + scrollbarRange);
 
         if (scrollbarRange != null && !isScrollbarAtBottom(scrollbarRange, image)) {
             throw new RuntimeException("Chat scroll should be at the bottom");
@@ -60,7 +60,7 @@ public class ChatBoxLocator extends CaptureProcessor {
         RectangleArea chatArea = new RectangleArea(
                 chatStartX,
                 chatEndX,
-                (int) arrowUpTopPoint.getY(),
+                (int) arrowUpTopPoint.getY() - 1,
                 chatBottomY(image)
         );
         gameLayout.setChatArea(chatArea);
@@ -68,7 +68,7 @@ public class ChatBoxLocator extends CaptureProcessor {
 
     private boolean hasValidChatBottomSignature(BufferedImage image) {
         int yPos = arrowDownBoxYTop(image);
-        return PixelInspectionUtils.hasValidSignature(image, new Point(0, yPos), SignaturesManager.find("ChatBottom"));
+        return PixelInspectionUtils.hasValidSignature(image, new Point(0, yPos), ElementSignaturesManager.find("ChatBottom"));
     }
 
     private int arrowDownBoxYTop(BufferedImage image) {
@@ -81,7 +81,6 @@ public class ChatBoxLocator extends CaptureProcessor {
 
     private VerticalRange findScrollbarRange(BufferedImage image) {
         int searchYLimit = arrowDownBoxYTop(image) - SCROLLBAR_MAX_HEIGHT + SCROLLBAR_MIN_HEIGHT;
-
         Point nextElement = PixelInspectionUtils.findValidElementUp(
                 image,
                 new Point(SCROLLBAR_LEFT_OFFSET, arrowDownBoxYTop(image)),
@@ -92,7 +91,6 @@ public class ChatBoxLocator extends CaptureProcessor {
         );
 
         if (nextElement != null) {
-            System.out.println("Possible scrollbar found at " + nextElement);
             int scrollbarHeight = PixelInspectionUtils.countConsecutiveValidPixelsUp(
                     image,
                     nextElement,
@@ -101,12 +99,16 @@ public class ChatBoxLocator extends CaptureProcessor {
             );
 
             Point validationPoint = new Point((int) nextElement.getX(), (int) nextElement.getY() - scrollbarHeight);
-            if (scrollbarHeight + 1 >= SCROLLBAR_MIN_HEIGHT && !matchesArrowUpPattern(image, validationPoint))
-                return new VerticalRange(
+            if (scrollbarHeight + 1 >= SCROLLBAR_MIN_HEIGHT && !matchesArrowUpPattern(image, validationPoint)) {
+                VerticalRange scrollbarRange = new VerticalRange(
                         (int) nextElement.getY(),
                         (int) nextElement.getY() - scrollbarHeight,
                         (int) nextElement.getY());
+                if (debugMode) System.out.println("Scrollbar found at " + scrollbarRange);
+                return scrollbarRange;
+            }
         }
+        if (debugMode) System.out.println("Scrollbar not found");
         return null;
     }
 
@@ -123,6 +125,6 @@ public class ChatBoxLocator extends CaptureProcessor {
     }
 
     private boolean matchesArrowUpPattern(BufferedImage image, Point point) {
-        return PixelInspectionUtils.hasValidSignature(image, point, SignaturesManager.find("ChatArrowUpBox"));
+        return PixelInspectionUtils.hasValidSignature(image, point, ElementSignaturesManager.find("ChatArrowUpBox"));
     }
 }

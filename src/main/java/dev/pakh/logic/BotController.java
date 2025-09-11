@@ -1,14 +1,9 @@
 package dev.pakh.logic;
 
-import dev.pakh.logic.handlers.CharacterCpHandler;
 import dev.pakh.logic.locators.CharacterInfoBoxLocator;
 import dev.pakh.logic.locators.ChatBoxLocator;
 import dev.pakh.logic.locators.SkillsAndFishingShotsLocator;
 import dev.pakh.models.game.GameLayout;
-import dev.pakh.models.game.GameWindow;
-import dev.pakh.utils.ScreenshotUtils;
-
-import java.awt.image.BufferedImage;
 
 public class BotController {
     private final CaptureDispatcher captureDispatcher;

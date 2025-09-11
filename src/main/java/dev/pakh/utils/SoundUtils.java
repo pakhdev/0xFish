@@ -69,9 +69,13 @@ public class SoundUtils {
         if (isPlaying.compareAndSet(false, true)) {
             new Thread(() -> {
                 try {
-                    playTone(new int[]{1500}, 120);
+                    playTone(new int[]{500}, 120);
                     Thread.sleep(80);
-                    playTone(new int[]{1700}, 120);
+                    playTone(new int[]{1000}, 120);
+                    Thread.sleep(80);
+                    playTone(new int[]{1000}, 120);
+                    Thread.sleep(80);
+                    playTone(new int[]{1000}, 120);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -80,6 +84,25 @@ public class SoundUtils {
             }).start();
         } else {
             System.out.println("------ Message skipped (already playing)");
+        }
+    }
+
+    public static void success() {
+        if (isPlaying.compareAndSet(false, true)) {
+            new Thread(() -> {
+                try {
+                    System.out.println("------ Success called");
+                    playTone(new int[]{1000}, 50);
+                    playTone(new int[]{1300}, 50);
+                    playTone(new int[]{1600}, 50);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    isPlaying.set(false);
+                }
+            }).start();
+        } else {
+            System.out.println("------ Success skipped (already playing)");
         }
     }
 }

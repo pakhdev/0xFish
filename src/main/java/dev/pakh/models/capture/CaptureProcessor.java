@@ -36,7 +36,7 @@ public abstract class CaptureProcessor {
     /**
      * Number of ticks passed since the last execution of this processor
      */
-    private int ticksSinceLastRun = 0;
+    protected int ticksSinceLastRun = 0;
 
     /**
      * Processes the captured image. Must be implemented by subclasses.
@@ -66,11 +66,11 @@ public abstract class CaptureProcessor {
      * @return {@code true} if the processor should run, {@code false} otherwise
      */
     public boolean shouldRunNow() {
+        ticksSinceLastRun++;
         if (ticksSinceLastRun >= getTimeoutTicks()) {
             ticksSinceLastRun = 0;
             return true;
         }
-        ticksSinceLastRun++;
         return false;
     }
 

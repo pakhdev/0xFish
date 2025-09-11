@@ -42,6 +42,7 @@ public class CaptureDispatcher {
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final Map<CaptureProcessor, Boolean> subscribers = new HashMap<>();
     public final GameWindow gameWindow = new GameWindow();
+    private boolean debugMode = true;
 
     /**
      * Initializes the dispatcher by locating the game window.
@@ -119,6 +120,7 @@ public class CaptureDispatcher {
      * @return the current instance of {@code CaptureDispatcher} for chaining
      */
     public CaptureDispatcher subscribe(CaptureProcessor captureProcessor) {
+        if (debugMode) System.out.println("CaptureDispatcher subscribe() " + captureProcessor);
         subscribers.put(captureProcessor, false);
         return this;
     }
@@ -141,6 +143,7 @@ public class CaptureDispatcher {
      * @param captureProcessor the processor to unsubscribe
      */
     public void unsubscribe(CaptureProcessor captureProcessor) {
+        if (debugMode) System.out.println("CaptureDispatcher unsubscribe() " + captureProcessor);
         subscribers.remove(captureProcessor);
     }
 
