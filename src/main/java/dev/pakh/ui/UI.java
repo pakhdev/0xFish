@@ -10,6 +10,7 @@ public class UI {
     private final int FRAME_HEIGHT = 165;
     private final int BUTTON_HEIGHT = 30;
     private final BotController bot;
+    private SwingWorker<Boolean, Void> fishingWorker;
 
     public UI(BotController botController) {
         bot = botController;
@@ -51,9 +52,11 @@ public class UI {
             };
             worker.execute();
         });
-        exitButton.addActionListener(e -> frame.dispose());
+        exitButton.addActionListener(e -> {
+            frame.dispatchEvent(new java.awt.event.WindowEvent(frame, java.awt.event.WindowEvent.WINDOW_CLOSING));
+        });
         startButton.addActionListener(e -> {
-            SwingWorker<Boolean, Void> worker = new SwingWorker<>() {
+            fishingWorker = new SwingWorker<>() {
                 @Override
                 protected Boolean doInBackground() throws Exception {
                     return bot.startFishing();
@@ -72,7 +75,7 @@ public class UI {
                     }
                 }
             };
-            worker.execute();
+            fishingWorker.execute();
         });
         stopButton.addActionListener(e -> {
             deactivateButton(stopButton);
@@ -90,6 +93,16 @@ public class UI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
         frame.setAlwaysOnTop(true);
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                if (fishingWorker != null && !fishingWorker.isDone()) {
+                    fishingWorker.cancel(true);
+                }
+                bot.stopFishing();
+            }
+        });
+
         return frame;
     }
 

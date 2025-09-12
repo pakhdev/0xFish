@@ -5,7 +5,8 @@ import dev.pakh.models.game.GameLayout;
 import dev.pakh.models.geometry.Direction;
 import dev.pakh.models.geometry.HorizontalRange;
 import dev.pakh.models.geometry.RectangleArea;
-import dev.pakh.utils.PixelInspectionUtils;
+import dev.pakh.utils.PixelColorUtils;
+import dev.pakh.utils.PixelFinderUtils;
 import dev.pakh.utils.SoundUtils;
 
 import java.awt.*;
@@ -64,7 +65,7 @@ public class CharacterHpHandler extends CaptureProcessor {
 
     private boolean currentPositionHasValidColor(BufferedImage image) {
         Point point = new Point(hpRange.startX() + hpPosition, hpRange.y());
-        return PixelInspectionUtils.hasValidColors(image, point, HP_BAR_VALID_COLORS);
+        return PixelColorUtils.hasValidColors(image, point, HP_BAR_VALID_COLORS);
     }
 
     private int locateHpInDirection(BufferedImage image, Direction direction) {
@@ -74,7 +75,7 @@ public class CharacterHpHandler extends CaptureProcessor {
 
         Point fromPoint = new Point(x, hpRange.y());
 
-        Point foundPoint = PixelInspectionUtils.findValidElementLeft(
+        Point foundPoint = PixelFinderUtils.findValidElementLeft(
                 image,
                 fromPoint,
                 HP_BAR_VALID_COLORS,

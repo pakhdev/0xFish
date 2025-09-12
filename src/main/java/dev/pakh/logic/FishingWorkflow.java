@@ -1,6 +1,9 @@
 package dev.pakh.logic;
 
 import dev.pakh.logic.handlers.chat.ChatHandler;
+import dev.pakh.logic.handlers.countdownDetection.CountdownDetectionHandler;
+import dev.pakh.logic.handlers.fishHp.FishHpHandler;
+import dev.pakh.logic.locators.FishingBoxLocator;
 import dev.pakh.models.capture.CaptureProcessor;
 import dev.pakh.models.game.GameLayout;
 import dev.pakh.models.game.GameWindow;
@@ -53,7 +56,10 @@ public class FishingWorkflow {
     }
 
     public void restart() {
-        // должен быстро завершаться, чтобы ChatMessagesHandler не зависал
+        captureDispatcher.unsubscribeByClass(FishHpHandler.class);
+        // Check fishing shots - else use stop()
+        // gameLayout.getFishingSkill().activate(null);
+        startFishing();
         System.out.println("Restart!");
     }
 
@@ -65,6 +71,15 @@ public class FishingWorkflow {
             scheduler.shutdownNow();
         }
         unsubscribeAll();
+    }
+
+    public void startFishing() {
+        if (!gameLayout.isFishingBoxDetected()) {
+            FishingBoxLocator fishingBoxLocator = new FishingBoxLocator(gameLayout, captureDispatcher);
+            captureDispatcher.subscribeForSingleRun(fishingBoxLocator);
+            return;
+        }
+        captureDispatcher.subscribe(new CountdownDetectionHandler(gameLayout, captureDispatcher));
     }
 
     private void startCaptureLoop() {

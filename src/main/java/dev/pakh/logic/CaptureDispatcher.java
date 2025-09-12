@@ -3,6 +3,7 @@ package dev.pakh.logic;
 import dev.pakh.models.game.GameWindow;
 import dev.pakh.models.capture.CaptureProcessor;
 import dev.pakh.models.geometry.RectangleArea;
+import dev.pakh.utils.LoggerUtils;
 import dev.pakh.utils.ScreenshotUtils;
 
 import java.awt.image.BufferedImage;
@@ -120,7 +121,7 @@ public class CaptureDispatcher {
      * @return the current instance of {@code CaptureDispatcher} for chaining
      */
     public CaptureDispatcher subscribe(CaptureProcessor captureProcessor) {
-        if (debugMode) System.out.println("CaptureDispatcher subscribe() " + captureProcessor);
+        if (debugMode) LoggerUtils.logCall(captureProcessor.toString());
         subscribers.put(captureProcessor, false);
         return this;
     }
@@ -133,6 +134,7 @@ public class CaptureDispatcher {
      * @return the current instance of {@code CaptureDispatcher} for chaining
      */
     public CaptureDispatcher subscribeForSingleRun(CaptureProcessor captureProcessor) {
+        if (debugMode) LoggerUtils.logCall(captureProcessor.toString());
         subscribers.put(captureProcessor, true);
         return this;
     }
@@ -143,9 +145,26 @@ public class CaptureDispatcher {
      * @param captureProcessor the processor to unsubscribe
      */
     public void unsubscribe(CaptureProcessor captureProcessor) {
-        if (debugMode) System.out.println("CaptureDispatcher unsubscribe() " + captureProcessor);
+        if (debugMode) LoggerUtils.logCall(captureProcessor.toString());
         subscribers.remove(captureProcessor);
     }
+
+    /**
+     * Unsubscribes all processors that are instances of the given class.
+     *
+     * @param clazz the class of processors to unsubscribe
+     */
+    public void unsubscribeByClass(Class<? extends CaptureProcessor> clazz) {
+        if (debugMode) LoggerUtils.logCall("Unsubscribing processors of class: " + clazz.getName());
+
+        List<CaptureProcessor> toRemove = subscribers.keySet()
+                .stream()
+                .filter(captureProcessor -> clazz.isInstance(captureProcessor))
+                .toList();
+
+        toRemove.forEach(subscribers::remove);
+    }
+
 
     /**
      * Waits for all provided {@link Future} tasks to complete.

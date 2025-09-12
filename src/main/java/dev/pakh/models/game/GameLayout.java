@@ -3,6 +3,7 @@ package dev.pakh.models.game;
 import dev.pakh.models.geometry.HorizontalRange;
 import dev.pakh.models.geometry.RectangleArea;
 import dev.pakh.models.skills.Skill;
+import dev.pakh.utils.LoggerUtils;
 
 public class GameLayout {
     boolean debugMode = true;
@@ -20,21 +21,24 @@ public class GameLayout {
     private Skill PetPickupSkill;
 
     // --- Detected during events ---
-    private RectangleArea fishingInfoBoxArea;
+    private RectangleArea fishingBoxArea;
     private HorizontalRange monsterHpBar;
 
     // --- Validations ---
     public boolean areStartupAreasReady() {
         if (debugMode) {
-            System.out.println("characterInfoBoxArea: " + (characterInfoBoxArea != null));
-            System.out.println("chatArea: " + (chatArea != null));
-            System.out.println("fishingShotArea: " + (fishingShotArea != null));
-            System.out.println("Fishing skill: " + (FishingSkill != null));
-            System.out.println("Pumping skill: " + (PumpingSkill != null));
-            System.out.println("Reeling skill: " + (ReelingSkill != null));
-            System.out.println("NextTarget skill: " + (NextTargetSkill != null));
-            System.out.println("PetAttack skill: " + (PetAttackSkill != null));
-            System.out.println("PetPickup skill: " + (PetPickupSkill != null));
+            Object[][] info = {
+                    {"characterInfoBoxArea", characterInfoBoxArea != null},
+                    {"chatArea", chatArea != null},
+                    {"fishingShotArea", fishingShotArea != null},
+                    {"FishingSkill", FishingSkill != null},
+                    {"PumpingSkill", PumpingSkill != null},
+                    {"ReelingSkill", ReelingSkill != null},
+                    {"NextTargetSkill", NextTargetSkill != null},
+                    {"PetAttackSkill", PetAttackSkill != null},
+                    {"PetPickupSkill", PetPickupSkill != null}
+            };
+            LoggerUtils.logBlock(info, 3); // 3 elementos por línea
         }
 
         return characterInfoBoxArea != null
@@ -52,8 +56,8 @@ public class GameLayout {
         return monsterHpBar != null;
     }
 
-    public boolean isFishingInfoBoxDetected() {
-        return fishingInfoBoxArea != null;
+    public boolean isFishingBoxDetected() {
+        return fishingBoxArea != null;
     }
 
     // --- Getters ---
@@ -93,8 +97,8 @@ public class GameLayout {
         return fishingShotArea;
     }
 
-    public RectangleArea getFishingInfoBoxArea() {
-        return fishingInfoBoxArea;
+    public RectangleArea getFishingBoxArea() {
+        return fishingBoxArea;
     }
 
     public HorizontalRange getMonsterHpBar() {
@@ -139,8 +143,8 @@ public class GameLayout {
         this.fishingShotArea = fishingShotArea;
     }
 
-    public void setFishingInfoBoxArea(RectangleArea fishingInfoBoxArea) {
-        this.fishingInfoBoxArea = fishingInfoBoxArea;
+    public void setFishingBoxArea(RectangleArea fishingBoxArea) {
+        this.fishingBoxArea = fishingBoxArea;
     }
 
     public void setMonsterHpBar(HorizontalRange monsterHpBar) {

@@ -1,9 +1,7 @@
 package dev.pakh.models.chat;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class ChatSnapshot {
     private List<ChatMessageLine> messageLines = new ArrayList<>();

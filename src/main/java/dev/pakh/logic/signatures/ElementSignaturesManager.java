@@ -22,7 +22,9 @@ public class ElementSignaturesManager {
             new DisabledFishingShotsSignature().get(),
             new EnabledFishingShotsV1Signature().get(),
             new EnabledFishingShotsV2Signature().get(),
-            new EnabledFishingShotsV3Signature().get()
+            new EnabledFishingShotsV3Signature().get(),
+            new FishingBoxBottomBorderSignature().get(),
+            new CountdownWatchSignature().get()
     );
 
     public static ElementVisualSignature find(String name) {

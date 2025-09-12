@@ -5,7 +5,9 @@ import dev.pakh.models.capture.CaptureProcessor;
 import dev.pakh.models.game.GameLayout;
 import dev.pakh.models.geometry.RectangleArea;
 import dev.pakh.models.geometry.VerticalRange;
-import dev.pakh.utils.PixelInspectionUtils;
+import dev.pakh.utils.PixelCounterUtils;
+import dev.pakh.utils.PixelFinderUtils;
+import dev.pakh.utils.PixelValidationUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -68,7 +70,7 @@ public class ChatBoxLocator extends CaptureProcessor {
 
     private boolean hasValidChatBottomSignature(BufferedImage image) {
         int yPos = arrowDownBoxYTop(image);
-        return PixelInspectionUtils.hasValidSignature(image, new Point(0, yPos), ElementSignaturesManager.find("ChatBottom"));
+        return PixelValidationUtils.hasValidSignature(image, new Point(0, yPos), ElementSignaturesManager.find("ChatBottom"));
     }
 
     private int arrowDownBoxYTop(BufferedImage image) {
@@ -81,7 +83,7 @@ public class ChatBoxLocator extends CaptureProcessor {
 
     private VerticalRange findScrollbarRange(BufferedImage image) {
         int searchYLimit = arrowDownBoxYTop(image) - SCROLLBAR_MAX_HEIGHT + SCROLLBAR_MIN_HEIGHT;
-        Point nextElement = PixelInspectionUtils.findValidElementUp(
+        Point nextElement = PixelFinderUtils.findValidElementUp(
                 image,
                 new Point(SCROLLBAR_LEFT_OFFSET, arrowDownBoxYTop(image)),
                 VALID__BORDER_COLORS,
@@ -91,7 +93,7 @@ public class ChatBoxLocator extends CaptureProcessor {
         );
 
         if (nextElement != null) {
-            int scrollbarHeight = PixelInspectionUtils.countConsecutiveValidPixelsUp(
+            int scrollbarHeight = PixelCounterUtils.countConsecutiveValidPixelsUp(
                     image,
                     nextElement,
                     SCROLLBAR_MAX_HEIGHT,
@@ -118,13 +120,14 @@ public class ChatBoxLocator extends CaptureProcessor {
 
     private Point findArrowUpBox(BufferedImage image, Point point) {
         int limitY = (int) point.getY() - MAX_SPACE_BETWEEN_ARROW_BOXES;
-        Point arrowBox = PixelInspectionUtils.findValidElementUp(image, point, VALID__BORDER_COLORS, limitY, 0, 14);
+        Point arrowBox = PixelFinderUtils.findValidElementUp(image, point, VALID__BORDER_COLORS, limitY, 0, 14);
+        if (arrowBox == null) throw new RuntimeException("Arrow up not found");
         if (!matchesArrowUpPattern((image), arrowBox))
             throw new RuntimeException("Arrow up box not found");
         return arrowBox;
     }
 
     private boolean matchesArrowUpPattern(BufferedImage image, Point point) {
-        return PixelInspectionUtils.hasValidSignature(image, point, ElementSignaturesManager.find("ChatArrowUpBox"));
+        return PixelValidationUtils.hasValidSignature(image, point, ElementSignaturesManager.find("ChatArrowUpBox"));
     }
 }

@@ -6,7 +6,8 @@ import dev.pakh.models.game.GameLayout;
 import dev.pakh.models.geometry.RectangleArea;
 import dev.pakh.models.geometry.VerticalRange;
 import dev.pakh.ui.MessageBox;
-import dev.pakh.utils.PixelInspectionUtils;
+import dev.pakh.utils.PixelFinderUtils;
+import dev.pakh.utils.PixelValidationUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -65,7 +66,7 @@ public class CharacterInfoBoxLocator extends CaptureProcessor {
         int imageWidth = image.getWidth();
 
         while (currentSearchingPositionX < imageWidth) {
-            Point foundPoint = PixelInspectionUtils.findValidElementRight(
+            Point foundPoint = PixelFinderUtils.findValidElementRight(
                     image,
                     new Point(currentSearchingPositionX, Math.round((float) VALID_LEFT_BORDER_HEIGHT / 2)),
                     VALID_LEFT_BORDER_COLORS,
@@ -86,7 +87,7 @@ public class CharacterInfoBoxLocator extends CaptureProcessor {
     }
 
     private boolean matchesLeftBorderPattern(BufferedImage image, Point point) {
-        return PixelInspectionUtils.hasValidSignature(
+        return PixelValidationUtils.hasValidSignature(
                 image,
                 point,
                 ElementSignaturesManager.find("CharacterInfoBoxLeftBorder")
@@ -101,7 +102,7 @@ public class CharacterInfoBoxLocator extends CaptureProcessor {
         if (debugMode) System.out.println("# Searching right border, X:" + currentSearchingPositionX + ", Y:" + y);
 
         while (currentSearchingPositionX < imageWidth) {
-            Point foundPoint = PixelInspectionUtils.findValidElementRight(
+            Point foundPoint = PixelFinderUtils.findValidElementRight(
                     image,
                     new Point(currentSearchingPositionX, y),
                     VALID_RIGHT_BORDER_COLORS,
@@ -124,7 +125,7 @@ public class CharacterInfoBoxLocator extends CaptureProcessor {
     }
 
     private boolean matchesRightBorderPattern(BufferedImage image, Point point) {
-        return PixelInspectionUtils.hasValidSignature(
+        return PixelValidationUtils.hasValidSignature(
                 image,
                 point,
                 ElementSignaturesManager.find("CharacterInfoBoxRightBorder")

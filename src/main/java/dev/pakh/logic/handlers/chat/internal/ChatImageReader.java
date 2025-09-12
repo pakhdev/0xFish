@@ -7,7 +7,7 @@ import dev.pakh.models.chat.ChatSnapshot;
 import dev.pakh.models.game.GameLayout;
 import dev.pakh.models.signatures.ChatColor;
 import dev.pakh.models.signatures.ChatColors;
-import dev.pakh.utils.PixelInspectionUtils;
+import dev.pakh.utils.PixelColorUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -85,8 +85,8 @@ public class ChatImageReader {
 //        int darkestShadow = 3;
 
         for (int x = startX; x <= endX; x++) {
-            ColorRGB pixelRGB = PixelInspectionUtils.getRGBColor(image, new Point(x, y));
-            ColorHSB pixelHSB = PixelInspectionUtils.getHSBColor(image, new Point(x, y));
+            ColorRGB pixelRGB = PixelColorUtils.getRGBColor(image, new Point(x, y));
+            ColorHSB pixelHSB = PixelColorUtils.getHSBColor(image, new Point(x, y));
             ChatColor pixelColorName = ChatColors.findColor(pixelRGB);
 //            boolean isShadow = pixelColorName == ChatColors.SHADOW;
             boolean isShadow = pixelHSB.b <= 2;

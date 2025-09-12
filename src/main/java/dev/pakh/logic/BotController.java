@@ -33,6 +33,7 @@ public class BotController {
 
     public void stopFishing() {
         System.out.println("Stop fishing");
-        fishingWorkflow.stop();
+        if (fishingWorkflow != null)
+            fishingWorkflow.stop();
     }
 }

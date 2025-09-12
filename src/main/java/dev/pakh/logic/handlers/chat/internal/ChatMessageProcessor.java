@@ -6,12 +6,16 @@ import dev.pakh.utils.SoundUtils;
 
 import java.util.List;
 
+// TODO: No lure message
+// TODO: Check monster message
 public class ChatMessageProcessor {
     private final boolean debugMode = true;
     private final Runnable restartFishing;
+    private final Runnable startFishing;
 
-    public ChatMessageProcessor(Runnable restartFishing) {
+    public ChatMessageProcessor(Runnable restartFishing, Runnable startFishing) {
         this.restartFishing = restartFishing;
+        this.startFishing = startFishing;
     }
 
     public void processMessages(List<ChatMessageLine> chatMessageLines) {
@@ -40,7 +44,7 @@ public class ChatMessageProcessor {
 
         if (matchesFishingBiteSignature(line)) {
             if (debugMode) System.out.println("** Fishing bite detected **");
-            // Call countdown watch waiting/fishing box detecting
+            startFishing.run();
             return;
         }
 

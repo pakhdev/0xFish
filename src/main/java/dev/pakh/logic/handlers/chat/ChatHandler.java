@@ -20,7 +20,7 @@ public class ChatHandler extends CaptureProcessor {
 
     public ChatHandler(GameLayout gameLayout, Runnable restartFishing) {
         this.chatImageReader = new ChatImageReader(gameLayout);
-        this.chatMessageProcessor = new ChatMessageProcessor(restartFishing);
+        this.chatMessageProcessor = new ChatMessageProcessor(restartFishing, restartFishing);
         this.ticksSinceLastRun = getTimeoutTicks();
     }
 

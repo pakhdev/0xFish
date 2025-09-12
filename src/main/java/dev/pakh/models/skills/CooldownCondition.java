@@ -1,7 +1,7 @@
 package dev.pakh.models.skills;
 
 import dev.pakh.models.signatures.ElementVisualSignature;
-import dev.pakh.utils.PixelInspectionUtils;
+import dev.pakh.utils.PixelValidationUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -17,6 +17,6 @@ public class CooldownCondition implements SkillCondition {
 
     @Override
     public boolean canActivate(BufferedImage image) {
-        return PixelInspectionUtils.hasValidSignature(image, iconPosition, cooldownSignature);
+        return PixelValidationUtils.hasValidSignature(image, iconPosition, cooldownSignature);
     }
 }
