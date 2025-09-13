@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 public class PixelValidationUtils {
-    private static boolean debugMode = true;
+    private static boolean debugMode = false;
 
     public static boolean hasValidSignature(BufferedImage image, Point point, ElementVisualSignature visualSignature) {
         if (debugMode) System.out.printf("# Validating signature for %s%n", visualSignature.name());

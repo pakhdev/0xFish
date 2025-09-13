@@ -1,5 +1,6 @@
 package dev.pakh.logic.handlers.chat;
 
+import dev.pakh.logic.FishingWorkflow;
 import dev.pakh.logic.handlers.chat.internal.ChatImageReader;
 import dev.pakh.logic.handlers.chat.internal.ChatMessageProcessor;
 import dev.pakh.models.capture.CaptureProcessor;
@@ -18,14 +19,15 @@ public class ChatHandler extends CaptureProcessor {
     private ChatSnapshot lastChatSnapshot = null;
     private final AtomicBoolean isProcessing = new AtomicBoolean(false);
 
-    public ChatHandler(GameLayout gameLayout, Runnable restartFishing) {
+    public ChatHandler(GameLayout gameLayout, FishingWorkflow fishingWorkflow) {
         this.chatImageReader = new ChatImageReader(gameLayout);
-        this.chatMessageProcessor = new ChatMessageProcessor(restartFishing, restartFishing);
+        this.chatMessageProcessor = new ChatMessageProcessor(fishingWorkflow);
         this.ticksSinceLastRun = getTimeoutTicks();
     }
 
+    // TODO: CHECK
     @Override
-    public void process(BufferedImage image) {
+    public void process(BufferedImage image) throws InterruptedException {
         if (!isProcessing.compareAndSet(false, true)) {
             if (debugMode)
                 System.out.println("[ChatHandler] process() IGNORED");

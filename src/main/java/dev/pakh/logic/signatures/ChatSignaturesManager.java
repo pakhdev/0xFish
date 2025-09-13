@@ -1,9 +1,6 @@
 package dev.pakh.logic.signatures;
 
-import dev.pakh.logic.signatures.chat.FishingBiteSignature;
-import dev.pakh.logic.signatures.chat.FishingEndedSignature;
-import dev.pakh.logic.signatures.chat.MonsterSignature;
-import dev.pakh.logic.signatures.chat.ObtainedOldBoxSignature;
+import dev.pakh.logic.signatures.chat.*;
 import dev.pakh.models.signatures.ChatSignature;
 
 import java.util.List;
@@ -13,7 +10,10 @@ public class ChatSignaturesManager {
             new ObtainedOldBoxSignature().get(),
             new MonsterSignature().get(),
             new FishingEndedSignature().get(),
-            new FishingBiteSignature().get()
+            new FishingBiteSignature().get(),
+            new NoBaitSignature().get(),
+            new CantFishHereSignature().get(),
+            new ObtainedSomethingSignature().get()
     );
 
     public static ChatSignature find(String name) {

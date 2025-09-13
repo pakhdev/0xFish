@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class PixelCounterUtils {
-    private static boolean debugMode = true;
+    private static boolean debugMode = false;
 
     public static int countConsecutiveValidPixelsLeft(BufferedImage image, Point point, int limit,
                                                       String[] validColors) {

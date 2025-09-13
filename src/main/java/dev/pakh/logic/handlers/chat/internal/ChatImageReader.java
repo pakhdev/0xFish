@@ -82,18 +82,14 @@ public class ChatImageReader {
     private ChatMessageLine readMessageLine(BufferedImage image, int startX, int endX, int y) {
         ChatColor messageColor = null;
         StringBuilder encoding = new StringBuilder();
-//        int darkestShadow = 3;
 
         for (int x = startX; x <= endX; x++) {
             ColorRGB pixelRGB = PixelColorUtils.getRGBColor(image, new Point(x, y));
             ColorHSB pixelHSB = PixelColorUtils.getHSBColor(image, new Point(x, y));
             ChatColor pixelColorName = ChatColors.findColor(pixelRGB);
-//            boolean isShadow = pixelColorName == ChatColors.SHADOW;
             boolean isShadow = pixelHSB.b <= 2;
 
             if (isShadow) {
-//                darkestShadow = Math.min(darkestShadow, pixelRGB.r);
-//                encoding.append(pixelRGB.r);
                 encoding.append(1);
                 continue;
             }
@@ -103,32 +99,10 @@ public class ChatImageReader {
             }
 
             encoding.append(0);
-//            encoding.append(5);
         }
 
-//        String normalizedEncoding = normalizeLineEncoding(encoding.toString(), darkestShadow);
         String normalizedEncoding = encoding.toString();
         return new ChatMessageLine(messageColor, normalizedEncoding);
-    }
-
-    /**
-     * Converts the raw pixel encoding of a chat line into a normalized binary string.
-     * <p>
-     * Each character in the output represents whether a pixel value is darker than
-     * the threshold determined by the darkest shadow.
-     *
-     * @param rawEncoding   the raw string encoding of pixel values
-     * @param darkestShadow the darkest shadow value found in the line
-     * @return a normalized binary string representing the line
-     */
-    private String normalizeLineEncoding(String rawEncoding, int darkestShadow) {
-        StringBuilder normalized = new StringBuilder();
-        int threshold = darkestShadow + 1;
-        for (int i = 0; i < rawEncoding.length(); i++) {
-            int value = Character.getNumericValue(rawEncoding.charAt(i));
-            normalized.append(value <= threshold ? '1' : '0');
-        }
-        return normalized.toString();
     }
 
     /**

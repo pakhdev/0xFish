@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FishingBoxLocator extends CaptureProcessor {
-    private final boolean debugMode = true;
+    private final boolean debugMode = false;
     private final int TOP_LOCATION_OFFSET = 300;
     private final int BOTTOM_LOCATION_OFFSET = 50;
     private final int VALID_BOTTOM_BORDER_WIDTH = 258;
@@ -43,6 +43,7 @@ public class FishingBoxLocator extends CaptureProcessor {
             if (matchesBottomBorderPattern(image, bottomBorder)) {
                 RectangleArea area = calculateFishingBoxArea(bottomBorder);
                 gameLayout.setFishingBoxArea(area);
+                break;
             }
         }
         if (!gameLayout.isFishingBoxDetected()) throw new RuntimeException("Fishing box not found");

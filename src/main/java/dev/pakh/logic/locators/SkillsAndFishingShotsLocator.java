@@ -11,7 +11,9 @@ import dev.pakh.models.skills.CooldownCondition;
 import dev.pakh.models.skills.Skill;
 import dev.pakh.models.skills.SkillCondition;
 import dev.pakh.ui.MessageBox;
-import dev.pakh.utils.PixelInspectionUtils;
+import dev.pakh.utils.PixelCounterUtils;
+import dev.pakh.utils.PixelFinderUtils;
+import dev.pakh.utils.PixelValidationUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -70,7 +72,7 @@ public class SkillsAndFishingShotsLocator extends CaptureProcessor {
 
         while (y > yLimit) {
             while (x < xLimit) {
-                Point foundPoint = PixelInspectionUtils.findValidElementRight(
+                Point foundPoint = PixelFinderUtils.findValidElementRight(
                         image,
                         new Point(x, y),
                         VALID_LEFT_BORDER_COLORS,
@@ -98,7 +100,7 @@ public class SkillsAndFishingShotsLocator extends CaptureProcessor {
     }
 
     private boolean matchesLeftBorderPattern(BufferedImage image, Point point) {
-        return PixelInspectionUtils.hasValidSignature(
+        return PixelValidationUtils.hasValidSignature(
                 image,
                 point,
                 ElementSignaturesManager.find("SkillsPanelLeftBorder")
@@ -106,7 +108,7 @@ public class SkillsAndFishingShotsLocator extends CaptureProcessor {
     }
 
     private boolean matchesBottomLeftBorderPattern(BufferedImage image, Point point) {
-        return PixelInspectionUtils.hasValidSignature(
+        return PixelValidationUtils.hasValidSignature(
                 image,
                 point,
                 ElementSignaturesManager.find("SkillsPanelLeftBorderBottom")
@@ -124,7 +126,7 @@ public class SkillsAndFishingShotsLocator extends CaptureProcessor {
                     lastPanel.startY() - Y_DISTANCE_BETWEEN_PANELS - VALID_LEFT_BORDER_HEIGHT
             );
 
-            boolean hasValidBorder = PixelInspectionUtils.countConsecutiveValidPixelsUp(
+            boolean hasValidBorder = PixelCounterUtils.countConsecutiveValidPixelsUp(
                     image,
                     targetPoint,
                     VALID_LEFT_BORDER_HEIGHT + 1,
@@ -190,7 +192,7 @@ public class SkillsAndFishingShotsLocator extends CaptureProcessor {
 
         for (int slot = 1; slot <= totalSlots; slot++) {
             Point slotPosition = getPanelSlotPosition(panelLeftBorder, slot);
-            if (PixelInspectionUtils.hasValidSignature(image, slotPosition, visualSignature))
+            if (PixelValidationUtils.hasValidSignature(image, slotPosition, visualSignature))
                 return slot;
         }
 

@@ -11,5 +11,6 @@ public class Main {
         CaptureDispatcher captureDispatcher = new CaptureDispatcher();
         BotController botController = new BotController(captureDispatcher);
         UI ui = new UI(botController);
+        botController.setWorkflowListener(ui);
     }
 }

@@ -155,14 +155,15 @@ public class CaptureDispatcher {
      * @param clazz the class of processors to unsubscribe
      */
     public void unsubscribeByClass(Class<? extends CaptureProcessor> clazz) {
-        if (debugMode) LoggerUtils.logCall("Unsubscribing processors of class: " + clazz.getName());
-
         List<CaptureProcessor> toRemove = subscribers.keySet()
                 .stream()
                 .filter(captureProcessor -> clazz.isInstance(captureProcessor))
                 .toList();
 
-        toRemove.forEach(subscribers::remove);
+        if (!toRemove.isEmpty()) {
+            if (debugMode) LoggerUtils.logCall("Unsubscribing processors of class: " + clazz.getName());
+            toRemove.forEach(subscribers::remove);
+        }
     }
 
 

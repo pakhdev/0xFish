@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class PixelFinderUtils {
-    private static Boolean debugMode = true;
+    private static Boolean debugMode = false;
 
     public static Point findValidElementLeft(
             BufferedImage image,
@@ -39,7 +39,7 @@ public class PixelFinderUtils {
             int requiredWidth,
             int requiredHeight
     ) {
-        if (debugMode) LoggerUtils.logCall("(X:%d-%d, Y:%d)", point.y, point.x, limitX);
+        if (debugMode) LoggerUtils.logCall("(X:%d-%d, Y:%d)", point.x, limitX, point.y);
 
         int y = point.y;
         for (int x = point.x; x <= limitX; x++) {

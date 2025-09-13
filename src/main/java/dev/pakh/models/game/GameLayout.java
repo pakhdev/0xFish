@@ -5,6 +5,8 @@ import dev.pakh.models.geometry.RectangleArea;
 import dev.pakh.models.skills.Skill;
 import dev.pakh.utils.LoggerUtils;
 
+import java.awt.*;
+
 public class GameLayout {
     boolean debugMode = true;
 
@@ -22,7 +24,7 @@ public class GameLayout {
 
     // --- Detected during events ---
     private RectangleArea fishingBoxArea;
-    private HorizontalRange monsterHpBar;
+    private Point monsterHpPoint;
 
     // --- Validations ---
     public boolean areStartupAreasReady() {
@@ -53,7 +55,7 @@ public class GameLayout {
     }
 
     public boolean isMonsterHpBarDetected() {
-        return monsterHpBar != null;
+        return monsterHpPoint != null;
     }
 
     public boolean isFishingBoxDetected() {
@@ -101,8 +103,8 @@ public class GameLayout {
         return fishingBoxArea;
     }
 
-    public HorizontalRange getMonsterHpBar() {
-        return monsterHpBar;
+    public Point getMonsterHpBar() {
+        return monsterHpPoint;
     }
 
     // --- Setters ---
@@ -147,8 +149,8 @@ public class GameLayout {
         this.fishingBoxArea = fishingBoxArea;
     }
 
-    public void setMonsterHpBar(HorizontalRange monsterHpBar) {
-        this.monsterHpBar = monsterHpBar;
+    public void setMonsterHpBar(Point monsterHpBar) {
+        this.monsterHpPoint = monsterHpBar;
     }
 }
 

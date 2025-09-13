@@ -1,29 +1,26 @@
 package dev.pakh.logic.handlers.chat.internal;
 
+import dev.pakh.logic.FishingWorkflow;
 import dev.pakh.logic.signatures.ChatSignaturesManager;
 import dev.pakh.models.chat.ChatMessageLine;
 import dev.pakh.utils.SoundUtils;
 
 import java.util.List;
 
-// TODO: No lure message
-// TODO: Check monster message
 public class ChatMessageProcessor {
     private final boolean debugMode = true;
-    private final Runnable restartFishing;
-    private final Runnable startFishing;
+    private final FishingWorkflow fishingWorkflow;
 
-    public ChatMessageProcessor(Runnable restartFishing, Runnable startFishing) {
-        this.restartFishing = restartFishing;
-        this.startFishing = startFishing;
+    public ChatMessageProcessor(FishingWorkflow fishingWorkflow) {
+        this.fishingWorkflow = fishingWorkflow;
     }
 
-    public void processMessages(List<ChatMessageLine> chatMessageLines) {
+    public void processMessages(List<ChatMessageLine> chatMessageLines) throws InterruptedException {
         for (ChatMessageLine line : chatMessageLines)
             handleMessageActions(line);
     }
 
-    private void handleMessageActions(ChatMessageLine line) {
+    private void handleMessageActions(ChatMessageLine line) throws InterruptedException {
         if (isPrivateMessage(line)) {
             if (debugMode) System.out.println("** Private message detected **");
             SoundUtils.message();
@@ -32,25 +29,45 @@ public class ChatMessageProcessor {
 
         if (matchesMonsterSignature(line)) {
             if (debugMode) System.out.println("** Monster detected **");
-            // TODO: Call monster handler
+            fishingWorkflow.selectMonster();
             return;
         }
 
         if (matchesFishingEndedSignature(line)) {
             if (debugMode) System.out.println("** Fishing end detected **");
-            restartFishing.run();
+            fishingWorkflow.restart();
             return;
         }
 
         if (matchesFishingBiteSignature(line)) {
             if (debugMode) System.out.println("** Fishing bite detected **");
-            startFishing.run();
+            fishingWorkflow.waitFishingStart();
             return;
         }
 
-        if (matchesObtainedOldBoxSignature(line)) {
-            if (debugMode) System.out.println("** Old box detected **");
-            SoundUtils.success();
+        if (matchesObtainedSomethingSignature(line)) {
+            System.out.println("** Obtention of something detected **");
+            if (matchesObtainedOldBoxSignature(line)) {
+                if (debugMode) System.out.println("** Old box detected **");
+                fishingWorkflow.incrementOldBoxCounter();
+                SoundUtils.success();
+            } else {
+                if (debugMode) System.out.println("** Fish detected **");
+                fishingWorkflow.incrementFishCounter();
+            }
+            return;
+        }
+
+
+        if (matchesNoBaitSignature(line)) {
+            if (debugMode) System.out.println("** No bait detected **");
+            fishingWorkflow.stop();
+            return;
+        }
+
+        if (matchesCantFishHereSignature(line)) {
+            if (debugMode) System.out.println("** Can't fish here detected **");
+            fishingWorkflow.stop();
         }
     }
 
@@ -72,5 +89,17 @@ public class ChatMessageProcessor {
 
     private boolean matchesObtainedOldBoxSignature(ChatMessageLine line) {
         return ChatSignaturesManager.find("ObtainedOldBox").isEqual(line);
+    }
+
+    private boolean matchesObtainedSomethingSignature(ChatMessageLine line) {
+        return ChatSignaturesManager.find("ObtainedSomething").startsWith(line);
+    }
+
+    private boolean matchesNoBaitSignature(ChatMessageLine line) {
+        return ChatSignaturesManager.find("NoBait").isEqual(line);
+    }
+
+    private boolean matchesCantFishHereSignature(ChatMessageLine line) {
+        return ChatSignaturesManager.find("CantFishHere").isEqual(line);
     }
 }
