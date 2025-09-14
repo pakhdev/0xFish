@@ -1,5 +1,7 @@
 package dev.pakh.logic;
 
+import dev.pakh.logic.handlers.characterCp.CharacterCpHandler;
+import dev.pakh.logic.handlers.characterHp.CharacterHpHandler;
 import dev.pakh.logic.handlers.chat.ChatHandler;
 import dev.pakh.logic.handlers.countdownDetection.CountdownDetectionHandler;
 import dev.pakh.logic.handlers.fishHp.FishHpHandler;
@@ -56,11 +58,11 @@ public class FishingWorkflow {
         gameWindow.activateWindow();
         if (areFishingShotsDisabled()) return false;
 
-        //    CharacterHpHandler characterHpHandler = new CharacterHpHandler(gameLayout);
-        //    subscribe(characterHpHandler);
-        //
-        //    CharacterCpHandler characterCpHandler = new CharacterCpHandler(gameLayout);
-        //    subscribe(characterCpHandler);
+        CharacterHpHandler characterHpHandler = new CharacterHpHandler(gameLayout);
+        subscribe(characterHpHandler);
+
+        CharacterCpHandler characterCpHandler = new CharacterCpHandler(gameLayout);
+        subscribe(characterCpHandler);
 
         ChatHandler chatHandler = new ChatHandler(gameLayout, this);
         subscribe(chatHandler);

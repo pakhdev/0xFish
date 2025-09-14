@@ -35,4 +35,9 @@ public class MonsterHpHandler extends CaptureProcessor {
         return PixelValidationUtils.hasValidSignature(image, monsterHpPoint, ElementSignaturesManager.find(
                 "MonsterFirstHpPixel"));
     }
+
+    @Override
+    protected int getTimeoutTicks() {
+        return 3;
+    }
 }

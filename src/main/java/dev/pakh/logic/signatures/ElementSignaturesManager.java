@@ -24,7 +24,9 @@ public class ElementSignaturesManager {
             new PetAttackSignature().get(),
             new PetPickupSignature().get(),
             new PumpingSignature().get(),
+            new PumpingCooldownSignature().get(),
             new ReelingSignature().get(),
+            new ReelingCooldownSignature().get(),
             new SkillsPanelLeftBorderBottomSignature().get(),
             new SkillsPanelLeftBorderSignature().get()
     );

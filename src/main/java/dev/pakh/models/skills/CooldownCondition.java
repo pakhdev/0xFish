@@ -17,6 +17,6 @@ public class CooldownCondition implements SkillCondition {
 
     @Override
     public boolean canActivate(BufferedImage image) {
-        return PixelValidationUtils.hasValidSignature(image, iconPosition, cooldownSignature);
+        return !PixelValidationUtils.hasValidSignature(image, iconPosition, cooldownSignature);
     }
 }

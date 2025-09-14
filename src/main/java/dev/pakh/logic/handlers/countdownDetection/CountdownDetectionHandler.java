@@ -28,7 +28,7 @@ public class CountdownDetectionHandler extends CaptureProcessor {
         Point point = new Point(gameLayout.getFishingBoxArea().startX(), gameLayout.getFishingBoxArea().startY());
         if (PixelValidationUtils.hasValidSignature(image, point, countdownWatchSignature)) {
             captureDispatcher.unsubscribeByClass(CountdownDetectionHandler.class);
-            captureDispatcher.subscribe(new FishHpHandler());
+            captureDispatcher.subscribe(new FishHpHandler(gameLayout));
         }
     }
 }

@@ -25,7 +25,6 @@ public class ChatHandler extends CaptureProcessor {
         this.ticksSinceLastRun = getTimeoutTicks();
     }
 
-    // TODO: CHECK
     @Override
     public void process(BufferedImage image) throws InterruptedException {
         if (!isProcessing.compareAndSet(false, true)) {
@@ -48,10 +47,5 @@ public class ChatHandler extends CaptureProcessor {
         } finally {
             isProcessing.set(false);
         }
-    }
-
-    @Override
-    protected int getTimeoutTicks() {
-        return 5;
     }
 }

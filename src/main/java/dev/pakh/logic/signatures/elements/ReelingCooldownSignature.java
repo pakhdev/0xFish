@@ -10,7 +10,7 @@ public class ReelingCooldownSignature extends SignatureEntry {
     @Override
     public ElementVisualSignature get() {
         return new ElementVisualSignature("ReelingCooldown", List.of(
-                ColorPoint.of(15, 13, "1D1027")
+                ColorPoint.of(15, 13, "090E14")
         ));
     }
 }

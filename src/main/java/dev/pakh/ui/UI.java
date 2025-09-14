@@ -14,11 +14,16 @@ public class UI implements FishingWorkflowListener {
     private SwingWorker<Boolean, Void> fishingWorker;
     private JButton startButton;
     private JButton stopButton;
+
     private JLabel fishCounterLabel;
     private JLabel boxCounterLabel;
-
     private int fishCount = 0;
     private int boxCount = 0;
+
+    private JLabel timerLabel;
+    private Timer timer;
+    private long startTime;
+    private long elapsedTime = 0;
 
     public UI(BotController botController) {
         bot = botController;
@@ -53,13 +58,23 @@ public class UI implements FishingWorkflowListener {
     }
 
     private void setupLabels(JFrame frame) {
+        JLabel activeTimeLabel = new JLabel("Active time:");
+        activeTimeLabel.setBounds(15, 7, 100, 20);
+        activeTimeLabel.setFont(activeTimeLabel.getFont().deriveFont(13f));
+        frame.add(activeTimeLabel);
+
+        timerLabel = new JLabel("00:00:00");
+        timerLabel.setBounds(15, 23, 120, 20);
+        timerLabel.setFont(timerLabel.getFont().deriveFont(13f));
+        frame.add(timerLabel);
+
         fishCounterLabel = new JLabel("Fish: 0");
-        fishCounterLabel.setBounds(15, 7, 100, 20);
+        fishCounterLabel.setBounds(150, 7, 100, 20);
         fishCounterLabel.setFont(fishCounterLabel.getFont().deriveFont(13f));
         frame.add(fishCounterLabel);
 
         boxCounterLabel = new JLabel("Old Boxes: 0");
-        boxCounterLabel.setBounds(15, 23, 130, 20);
+        boxCounterLabel.setBounds(150, 23, 130, 20);
         boxCounterLabel.setFont(boxCounterLabel.getFont().deriveFont(13f));
         frame.add(boxCounterLabel);
     }
@@ -171,16 +186,51 @@ public class UI implements FishingWorkflowListener {
         button.setEnabled(false);
     }
 
+    private void startTimer() {
+        startTime = System.currentTimeMillis() - elapsedTime;
+        timer = new Timer(1000, e -> updateTimer());
+        timer.start();
+    }
+
+    private void stopTimer() {
+        if (timer != null) {
+            timer.stop();
+            elapsedTime = System.currentTimeMillis() - startTime;
+        }
+    }
+
+    private void resetTimer() {
+        if (timer != null) {
+            timer.stop();
+        }
+        elapsedTime = 0;
+        timerLabel.setText("00:00:00");
+    }
+
+    private void updateTimer() {
+        long now = System.currentTimeMillis();
+        long totalMillis = now - startTime;
+
+        long totalSeconds = totalMillis / 1000;
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+
+        timerLabel.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+    }
+
     @Override
     public void onFishingStarted() {
         deactivateButton(startButton);
         activateButton(stopButton);
+        startTimer();
     }
 
     @Override
     public void onFishingStopped() {
         activateButton(startButton);
         deactivateButton(stopButton);
+        stopTimer();
     }
 
     @Override
