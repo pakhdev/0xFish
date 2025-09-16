@@ -1,108 +1,105 @@
 package dev.pakh.utils;
 
 import javax.sound.sampled.*;
-import java.io.File;
-import java.io.IOException;
 
-import javax.sound.sampled.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class SoundUtils {
+    private static final float SAMPLE_RATE = 44100f;
 
-    private static final AtomicBoolean isPlaying = new AtomicBoolean(false);
+    private static final Queue<int[][]> playlist = new ArrayDeque<>();
+    private static boolean isPlaying = false;
 
-    public static void playSound(String path) {
+    public static void danger() {
+        enqueue(new int[][]{
+                {600, 200}, {1200, 200}
+        }, 6);
+    }
+
+    public static void success() {
+        enqueue(new int[][]{
+                {600, 60}, {800, 60}, {1100, 100}
+        }, 1);
+    }
+
+    public static void message() {
+        enqueue(new int[][]{
+                {1200, 50}, {1000, 50}, {800, 50}, {400, 150}
+        }, 6);
+    }
+
+    private static synchronized void enqueue(int[][] baseTones, int repeats) {
+        int[][] tones = new int[baseTones.length * repeats][2];
+        for (int i = 0; i < repeats; i++) {
+            System.arraycopy(baseTones, 0, tones, i * baseTones.length, baseTones.length);
+        }
+
+        playlist.add(tones);
+
+        if (!isPlaying) {
+            playNext();
+        }
+    }
+
+    private static synchronized void playNext() {
+        int[][] tones = playlist.poll();
+        if (tones == null) {
+            isPlaying = false;
+            return;
+        }
+
+        isPlaying = true;
+
         new Thread(() -> {
-            try (AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(path))) {
-                Clip clip = AudioSystem.getClip();
-                clip.open(audioIn);
-                clip.start();
-            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            try {
+                playSequence(tones);
+            } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                playNext();
             }
         }).start();
     }
 
-    private static void playTone(int[] freqs, int msecs) throws LineUnavailableException {
-        float SAMPLE_RATE = 44100;
-        byte[] buf = new byte[1];
-        AudioFormat af = new AudioFormat(SAMPLE_RATE, 8, 1, true, false);
+    private static void playSequence(int[][] tones) throws LineUnavailableException {
+        AudioFormat af = new AudioFormat(SAMPLE_RATE, 16, 1, true, false);
         try (SourceDataLine sdl = AudioSystem.getSourceDataLine(af)) {
             sdl.open(af);
             sdl.start();
-            for (int i = 0; i < msecs * SAMPLE_RATE / 1000; i++) {
-                double sample = 0;
-                for (int f : freqs) {
-                    sample += Math.sin(i / (SAMPLE_RATE / f) * 2.0 * Math.PI);
-                }
-                buf[0] = (byte) (sample / freqs.length * 127);
-                sdl.write(buf, 0, 1);
+            for (int[] tone : tones) {
+                int freq = tone[0];
+                int msecs = tone[1];
+                writeTone(sdl, freq, msecs);
             }
             sdl.drain();
             sdl.stop();
         }
     }
 
-    public static void danger() {
-        if (isPlaying.compareAndSet(false, true)) {
-            new Thread(() -> {
-                try {
-                    System.out.println("------ Danger called");
-                    for (int i = 0; i < 6; i++) {
-                        playTone(new int[]{600}, 200);
-                        playTone(new int[]{1200}, 200);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    isPlaying.set(false); // liberar flag
-                }
-            }).start();
-        } else {
-            System.out.println("------ Danger skipped (already playing)");
-        }
-    }
+    private static void writeTone(SourceDataLine sdl, int freq, int msecs) {
+        int totalSamples = (int) (msecs * SAMPLE_RATE / 1000);
+        int fadeSamples = (int) (0.005 * SAMPLE_RATE);
 
-    public static void message() {
-        if (isPlaying.compareAndSet(false, true)) {
-            new Thread(() -> {
-                try {
-                    playTone(new int[]{500}, 120);
-                    Thread.sleep(80);
-                    playTone(new int[]{1000}, 120);
-                    Thread.sleep(80);
-                    playTone(new int[]{1000}, 120);
-                    Thread.sleep(80);
-                    playTone(new int[]{1000}, 120);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    isPlaying.set(false);
-                }
-            }).start();
-        } else {
-            System.out.println("------ Message skipped (already playing)");
-        }
-    }
+        byte[] buffer = new byte[2];
 
-    public static void success() {
-        if (isPlaying.compareAndSet(false, true)) {
-            new Thread(() -> {
-                try {
-                    System.out.println("------ Success called");
-                    playTone(new int[]{1000}, 50);
-                    playTone(new int[]{1300}, 50);
-                    playTone(new int[]{1600}, 50);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    isPlaying.set(false);
-                }
-            }).start();
-        } else {
-            System.out.println("------ Success skipped (already playing)");
+        for (int i = 0; i < totalSamples; i++) {
+            double angle = 2.0 * Math.PI * i * freq / SAMPLE_RATE;
+            double sample = Math.sin(angle);
+
+            double envelope = 1.0;
+            if (i < fadeSamples) {
+                envelope = (double) i / fadeSamples;
+            } else if (i > totalSamples - fadeSamples) {
+                envelope = (double) (totalSamples - i) / fadeSamples;
+            }
+
+            short val = (short) (sample * envelope * Short.MAX_VALUE);
+
+            buffer[0] = (byte) (val & 0xff);
+            buffer[1] = (byte) ((val >> 8) & 0xff);
+
+            sdl.write(buffer, 0, 2);
         }
     }
 }

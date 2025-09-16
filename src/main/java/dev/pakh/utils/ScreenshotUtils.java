@@ -13,8 +13,7 @@ public class ScreenshotUtils {
 
     public static BufferedImage capture(RectangleArea area, String name) {
         Rectangle captureRect = new Rectangle(area.startX(), area.startY(), area.width(), area.height());
-        BufferedImage captured = doCapture(captureRect);
-        BufferedImage image = normalizeImage(area, captured);
+        BufferedImage image = doCapture(captureRect);
         if (debugMode) saveImage(name, image);
         return image;
     }
@@ -24,9 +23,8 @@ public class ScreenshotUtils {
             throw new IllegalArgumentException("Invalid crop coordinates");
 
         BufferedImage cropped = image.getSubimage(area.startX(), area.startY(), area.width(), area.height());
-        BufferedImage copy = normalizeImage(area, cropped);
-        if (debugMode) saveImage(name, copy);
-        return copy;
+        if (debugMode) saveImage(name, cropped);
+        return cropped;
     }
 
     private static void saveImage(String name, BufferedImage image) {
@@ -36,12 +34,6 @@ public class ScreenshotUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private static BufferedImage normalizeImage(RectangleArea area, Image source) {
-        BufferedImage result = new BufferedImage(area.width(), area.height(), BufferedImage.TYPE_INT_RGB);
-        result.getGraphics().drawImage(source, 0, 0, null);
-        return result;
     }
 
     private static BufferedImage doCapture(Rectangle rectangle) {
