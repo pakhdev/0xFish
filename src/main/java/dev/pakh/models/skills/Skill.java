@@ -27,5 +27,9 @@ public class Skill {
         }
         return false;
     }
+
+    public void activateWithInterval(int count, int intervalMs) {
+        keyPressUtils.pressFWithInterval(keyNumber, count, intervalMs);
+    }
 }
 

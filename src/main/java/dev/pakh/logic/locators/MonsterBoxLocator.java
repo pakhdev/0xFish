@@ -50,7 +50,7 @@ public class MonsterBoxLocator extends CaptureProcessor {
                 break;
             }
         }
-        if (!gameLayout.isMonsterHpBarDetected()) throw new RuntimeException("Monster box not found");
+        if (!gameLayout.isMonsterHpBarDetected()) return;
         captureDispatcher.unsubscribeByClass(MonsterBoxLocator.class);
         fishingWorkflow.killMonster();
     }

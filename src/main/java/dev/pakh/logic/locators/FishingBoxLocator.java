@@ -2,6 +2,7 @@ package dev.pakh.logic.locators;
 
 import dev.pakh.logic.CaptureDispatcher;
 import dev.pakh.logic.handlers.countdownDetection.CountdownDetectionHandler;
+import dev.pakh.logic.ports.FishingStateListener;
 import dev.pakh.logic.signatures.ElementSignaturesManager;
 import dev.pakh.models.capture.CaptureProcessor;
 import dev.pakh.models.game.GameLayout;
@@ -25,10 +26,13 @@ public class FishingBoxLocator extends CaptureProcessor {
     };
     private final GameLayout gameLayout;
     private final CaptureDispatcher captureDispatcher;
+    private final FishingStateListener fishingStateListener;
 
-    public FishingBoxLocator(GameLayout gameLayout, CaptureDispatcher captureDispatcher) {
+    public FishingBoxLocator(GameLayout gameLayout, CaptureDispatcher captureDispatcher,
+                             FishingStateListener fishingStateListener) {
         this.gameLayout = gameLayout;
         this.captureDispatcher = captureDispatcher;
+        this.fishingStateListener = fishingStateListener;
     }
 
     @Override
@@ -46,9 +50,9 @@ public class FishingBoxLocator extends CaptureProcessor {
                 break;
             }
         }
-        if (!gameLayout.isFishingBoxDetected()) throw new RuntimeException("Fishing box not found");
+        if (!gameLayout.isFishingBoxDetected()) return;
 
-        captureDispatcher.subscribe(new CountdownDetectionHandler(gameLayout, captureDispatcher));
+        captureDispatcher.subscribe(new CountdownDetectionHandler(gameLayout, captureDispatcher, fishingStateListener));
     }
 
     private RectangleArea calculateFishingBoxArea(Point bottomBorder) {

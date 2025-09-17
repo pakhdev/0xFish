@@ -5,6 +5,7 @@ import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.win32.StdCallLibrary;
+import dev.pakh.logic.ports.FishingStateListener;
 import dev.pakh.models.geometry.RectangleArea;
 import dev.pakh.ui.MessageBox;
 
@@ -19,6 +20,11 @@ public class GameWindow {
 
     private HWND hwnd = null;
     private RectangleArea area = null;
+    private FishingStateListener fishingStateListener;
+
+    public GameWindow(FishingStateListener fishingStateListener) {
+        this.fishingStateListener = fishingStateListener;
+    }
 
     public GameWindow identify() {
         List<HWND> windows = findLineageWindows();
@@ -27,8 +33,10 @@ public class GameWindow {
         HWND foundHWND = windows.get(0);
         RectangleArea area = getWindowArea(foundHWND);
 
-        if (area == null)
+        if (area == null) {
+            fishingStateListener.onError("Can not get window position");
             throw new RuntimeException("Can not get window position");
+        }
 
         this.hwnd = foundHWND;
         this.area = area;
@@ -75,7 +83,7 @@ public class GameWindow {
             }
         }
 
-        MessageBox.error("The game window could not be activated in time");
+        fishingStateListener.onError("The game window could not be activated in time");
         return false;
     }
 
@@ -120,11 +128,15 @@ public class GameWindow {
     }
 
     private void validateSingleWindow(List<HWND> windows) {
-        if (windows.isEmpty())
+        if (windows.isEmpty()) {
+            fishingStateListener.onError("Window not found");
             throw new RuntimeException("Window not found");
+        }
 
-        if (windows.size() > 1)
+        if (windows.size() > 1) {
+            fishingStateListener.onError("More than one window found");
             throw new RuntimeException("More than one window found");
+        }
     }
 
     private interface User32Helper extends StdCallLibrary {

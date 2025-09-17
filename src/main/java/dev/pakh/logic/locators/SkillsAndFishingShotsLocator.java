@@ -10,7 +10,6 @@ import dev.pakh.models.skills.AlwaysReadyCondition;
 import dev.pakh.models.skills.CooldownCondition;
 import dev.pakh.models.skills.Skill;
 import dev.pakh.models.skills.SkillCondition;
-import dev.pakh.ui.MessageBox;
 import dev.pakh.utils.PixelCounterUtils;
 import dev.pakh.utils.PixelFinderUtils;
 import dev.pakh.utils.PixelValidationUtils;
@@ -52,10 +51,7 @@ public class SkillsAndFishingShotsLocator extends CaptureProcessor {
         List<VerticalRange> skillsPanels = new ArrayList<>();
 
         VerticalRange leftBorderRange = findLeftBorder(image);
-        if (leftBorderRange == null) {
-            MessageBox.error("Left border of skills panel not found");
-            return;
-        }
+        if (leftBorderRange == null) return;
 
         skillsPanels.add(leftBorderRange);
         this.findMorePanels(image, skillsPanels)

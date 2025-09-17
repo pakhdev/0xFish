@@ -8,9 +8,11 @@ import dev.pakh.logic.handlers.fishHp.FishHpHandler;
 import dev.pakh.logic.handlers.monsterHp.MonsterHpHandler;
 import dev.pakh.logic.locators.FishingBoxLocator;
 import dev.pakh.logic.locators.MonsterBoxLocator;
+import dev.pakh.logic.ports.BotStateListener;
+import dev.pakh.logic.ports.FishingStateListener;
+import dev.pakh.logic.ports.FishingStatsListener;
 import dev.pakh.logic.signatures.ElementSignaturesManager;
 import dev.pakh.models.geometry.RectangleArea;
-import dev.pakh.models.ui.FishingWorkflowListener;
 import dev.pakh.models.capture.CaptureProcessor;
 import dev.pakh.models.game.GameLayout;
 import dev.pakh.models.game.GameWindow;
@@ -32,11 +34,14 @@ public class FishingWorkflow {
     private final GameWindow gameWindow;
     private final GameLayout gameLayout;
     private final int DISPATCH_INTERVAL_MS = 200;
-    private FishingWorkflowListener listener;
 
     private final List<CaptureProcessor> subscribedProcessors = new ArrayList<>();
     private ScheduledExecutorService scheduler;
     private ScheduledFuture<?> captureTask;
+
+    public BotStateListener botStateListener;
+    public FishingStatsListener fishingStatsListener;
+    public FishingStateListener fishingStateListener;
 
     public FishingWorkflow(
             CaptureDispatcher captureDispatcher,
@@ -48,8 +53,11 @@ public class FishingWorkflow {
         this.gameLayout = gameLayout;
     }
 
-    public void setListener(FishingWorkflowListener listener) {
-        this.listener = listener;
+    public void setListeners(BotStateListener botStateListener, FishingStatsListener fishingStatsListener,
+                             FishingStateListener fishingStateListener) {
+        this.botStateListener = botStateListener;
+        this.fishingStatsListener = fishingStatsListener;
+        this.fishingStateListener = fishingStateListener;
     }
 
     public boolean start() {
@@ -69,9 +77,8 @@ public class FishingWorkflow {
 
         startCaptureLoop();
         gameLayout.getFishingSkill().activate(null);
-
-        if (listener != null)
-            SwingUtilities.invokeLater(() -> listener.onFishingStarted());
+        fishingStateListener.onFishingWait();
+        botStateListener.onFishingStarted();
         return true;
     }
 
@@ -82,9 +89,11 @@ public class FishingWorkflow {
             return;
         }
         gameLayout.getFishingSkill().activate(null);
+        fishingStateListener.onFishingWait();
     }
 
     public void stop() {
+        botStateListener.onFishingStopped();
         if (captureTask != null) {
             captureTask.cancel(true);
         }
@@ -92,18 +101,15 @@ public class FishingWorkflow {
             scheduler.shutdownNow();
         }
         unsubscribeAll();
-
-        if (listener != null)
-            SwingUtilities.invokeLater(() -> listener.onFishingStopped());
     }
 
     public void waitFishingStart() {
         if (!gameLayout.isFishingBoxDetected()) {
-            FishingBoxLocator fishingBoxLocator = new FishingBoxLocator(gameLayout, captureDispatcher);
+            FishingBoxLocator fishingBoxLocator = new FishingBoxLocator(gameLayout, captureDispatcher, fishingStateListener);
             captureDispatcher.subscribeForSingleRun(fishingBoxLocator);
             return;
         }
-        captureDispatcher.subscribe(new CountdownDetectionHandler(gameLayout, captureDispatcher));
+        captureDispatcher.subscribe(new CountdownDetectionHandler(gameLayout, captureDispatcher, fishingStateListener));
     }
 
     public void selectMonster() throws InterruptedException {
@@ -133,19 +139,7 @@ public class FishingWorkflow {
     public void pickupMonsterDrop() throws InterruptedException {
         System.out.println("Pick up drop");
 
-        gameLayout.getPetPickupSkill().activate(null);
-        Thread.sleep(30);
-        gameLayout.getPetPickupSkill().activate(null);
-    }
-
-    public void incrementFishCounter() {
-        if (listener != null)
-            SwingUtilities.invokeLater(() -> listener.onFishObtention());
-    }
-
-    public void incrementOldBoxCounter() {
-        if (listener != null)
-            SwingUtilities.invokeLater(() -> listener.onOldBoxObtention());
+        gameLayout.getPetPickupSkill().activateWithInterval(3, 300);
     }
 
     private void startCaptureLoop() {
@@ -169,6 +163,8 @@ public class FishingWorkflow {
         for (CaptureProcessor processor : subscribedProcessors) {
             captureDispatcher.unsubscribe(processor);
         }
+        captureDispatcher.unsubscribeByClass(FishHpHandler.class);
+        captureDispatcher.unsubscribeByClass(CountdownDetectionHandler.class);
         subscribedProcessors.clear();
     }
 
@@ -194,7 +190,7 @@ public class FishingWorkflow {
             }
         }
 
-        if (!enabled) System.out.println("Enable fishing shots");
+        if (!enabled) fishingStateListener.onError("Enable fishing shots");
         return !enabled;
     }
 }

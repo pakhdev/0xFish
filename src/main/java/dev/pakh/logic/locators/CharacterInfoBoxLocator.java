@@ -41,16 +41,10 @@ public class CharacterInfoBoxLocator extends CaptureProcessor {
     @Override
     public void process(BufferedImage image) {
         VerticalRange leftBorderRange = findLeftBorder(image);
-        if (leftBorderRange == null) {
-            MessageBox.error("Left border of Character Info Box not found");
-            return;
-        }
+        if (leftBorderRange == null) return;
 
         VerticalRange rightBorderRange = findRightBorder(image, leftBorderRange);
-        if (rightBorderRange == null) {
-            MessageBox.error("Right border of Character Info Box not found");
-            return;
-        }
+        if (rightBorderRange == null) return;
 
         gameLayout.setCharacterInfoBoxArea(new RectangleArea(
                 leftBorderRange.x(),

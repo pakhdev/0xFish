@@ -1,14 +1,15 @@
 package dev.pakh.models.game;
 
-import dev.pakh.models.geometry.HorizontalRange;
+import dev.pakh.logic.ports.FishingStateListener;
 import dev.pakh.models.geometry.RectangleArea;
 import dev.pakh.models.skills.Skill;
-import dev.pakh.utils.LoggerUtils;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GameLayout {
-    boolean debugMode = true;
+    private final FishingStateListener fishingStateListener;
 
     // --- Detected at startup ---
     private RectangleArea characterInfoBoxArea;
@@ -26,40 +27,44 @@ public class GameLayout {
     private RectangleArea fishingBoxArea;
     private Point monsterHpPoint;
 
-    // --- Validations ---
-    public boolean areStartupAreasReady() {
-        if (debugMode) {
-            Object[][] info = {
-                    {"characterInfoBoxArea", characterInfoBoxArea != null},
-                    {"chatArea", chatArea != null},
-                    {"fishingShotArea", fishingShotArea != null},
-                    {"FishingSkill", FishingSkill != null},
-                    {"PumpingSkill", PumpingSkill != null},
-                    {"ReelingSkill", ReelingSkill != null},
-                    {"NextTargetSkill", NextTargetSkill != null},
-                    {"PetAttackSkill", PetAttackSkill != null},
-                    {"PetPickupSkill", PetPickupSkill != null}
-            };
-            LoggerUtils.logBlock(info, 3); // 3 elementos por línea
-        }
-
-        return characterInfoBoxArea != null
-                && chatArea != null
-                && fishingShotArea != null
-                && FishingSkill != null
-                && PumpingSkill != null
-                && ReelingSkill != null
-                && NextTargetSkill != null
-                && PetAttackSkill != null
-                && PetPickupSkill != null;
+    public GameLayout(FishingStateListener fishingStateListener) {
+        this.fishingStateListener = fishingStateListener;
     }
 
+    // --- Validations ---
+    public boolean areStartupAreasReady() {
+        Map<Object, String> checks = new HashMap<>();
+        checks.put(characterInfoBoxArea, "Character info box not detected");
+        checks.put(chatArea, "Chat area not detected");
+        checks.put(fishingShotArea, "Fishing shot area not detected");
+        checks.put(FishingSkill, "Fishing skill not detected");
+        checks.put(PumpingSkill, "Pumping skill not detected");
+        checks.put(ReelingSkill, "Reeling skill not detected");
+        checks.put(NextTargetSkill, "Next target skill not detected");
+        checks.put(PetAttackSkill, "Pet attack skill not detected");
+        checks.put(PetPickupSkill, "Pet pickup skill not detected");
+
+        for (Map.Entry<Object, String> entry : checks.entrySet()) {
+            if (entry.getKey() == null) {
+                fishingStateListener.onError(entry.getValue());
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
     public boolean isMonsterHpBarDetected() {
-        return monsterHpPoint != null;
+        boolean isDetected = monsterHpPoint != null;
+        if (!isDetected) fishingStateListener.onError("Monster HP bar not found");
+        return isDetected;
     }
 
     public boolean isFishingBoxDetected() {
-        return fishingBoxArea != null;
+        boolean isDetected = fishingBoxArea != null;
+        if (!isDetected) fishingStateListener.onError("Fishing box not found not found");
+        return isDetected;
     }
 
     // --- Getters ---

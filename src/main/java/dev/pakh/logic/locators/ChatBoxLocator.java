@@ -1,5 +1,6 @@
 package dev.pakh.logic.locators;
 
+import dev.pakh.logic.ports.FishingStateListener;
 import dev.pakh.logic.signatures.ElementSignaturesManager;
 import dev.pakh.models.capture.CaptureProcessor;
 import dev.pakh.models.game.GameLayout;
@@ -15,6 +16,7 @@ import java.awt.image.BufferedImage;
 public class ChatBoxLocator extends CaptureProcessor {
     private final boolean debugMode = true;
     private final GameLayout gameLayout;
+    private final FishingStateListener fishingStateListener;
     private final int BOTTOM_IDENTIFICATION_HEIGHT = 82;
     private final int CHAT_WIDTH = 315;
     private final int CHAT_LEFT_OFFSET = 5;
@@ -33,21 +35,20 @@ public class ChatBoxLocator extends CaptureProcessor {
             "878275", "898376"
     };
 
-    public ChatBoxLocator(GameLayout gameLayout) {
+    public ChatBoxLocator(GameLayout gameLayout, FishingStateListener fishingStateListener) {
         this.gameLayout = gameLayout;
+        this.fishingStateListener = fishingStateListener;
     }
 
     @Override
     public void process(BufferedImage image) {
-        if (!hasValidChatBottomSignature(image)) {
-            System.out.println("Critical error: Chat bottom part is incorrect");
-            return;
-        }
+        if (!hasValidChatBottomSignature(image)) return;
 
         VerticalRange scrollbarRange = findScrollbarRange(image);
 
         if (scrollbarRange != null && !isScrollbarAtBottom(scrollbarRange, image)) {
-            throw new RuntimeException("Chat scroll should be at the bottom");
+            fishingStateListener.onError("Chat scroll should be at the bottom");
+            return;
         }
 
         int searchArrowUpFromY = scrollbarRange == null
@@ -55,6 +56,7 @@ public class ChatBoxLocator extends CaptureProcessor {
                 : scrollbarRange.startY() - 1;
 
         Point arrowUpTopPoint = findArrowUpBox(image, new Point(SCROLLBAR_LEFT_OFFSET, searchArrowUpFromY));
+        if (arrowUpTopPoint == null) return;
 
         int chatStartX = (int) arrowUpTopPoint.getX() + ARROW_BOX_SIZE + CHAT_LEFT_OFFSET - 1;
         int chatEndX = chatStartX + CHAT_WIDTH - 1;
@@ -121,9 +123,8 @@ public class ChatBoxLocator extends CaptureProcessor {
     private Point findArrowUpBox(BufferedImage image, Point point) {
         int limitY = (int) point.getY() - MAX_SPACE_BETWEEN_ARROW_BOXES;
         Point arrowBox = PixelFinderUtils.findValidElementUp(image, point, VALID__BORDER_COLORS, limitY, 0, 14);
-        if (arrowBox == null) throw new RuntimeException("Arrow up not found");
-        if (!matchesArrowUpPattern((image), arrowBox))
-            throw new RuntimeException("Arrow up box not found");
+        if (arrowBox == null || !matchesArrowUpPattern((image), arrowBox))
+            return null;
         return arrowBox;
     }
 

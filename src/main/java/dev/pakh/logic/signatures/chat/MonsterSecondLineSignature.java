@@ -4,13 +4,13 @@ import dev.pakh.models.signatures.ChatColors;
 import dev.pakh.models.signatures.ChatSignature;
 import dev.pakh.models.signatures.ChatSignatureEntry;
 
-public class MonsterSignature extends ChatSignatureEntry {
+public class MonsterSecondLineSignature extends ChatSignatureEntry {
     @Override
     public ChatSignature get() {
         return new ChatSignature(
-                "Monster",
+                "MonsterSecondLine",
                 ChatColors.BEIGE,
-                "000010000000000000001000000000000000010000001000000100100010000000000000010000000010001000100000000000001000100100100010000001000000000000"
+                "000000000000100010000000000000100100000010000000000100010010000000000000000000000010000000000000000000010000000010000000000000000000000000"
         );
     }
 }

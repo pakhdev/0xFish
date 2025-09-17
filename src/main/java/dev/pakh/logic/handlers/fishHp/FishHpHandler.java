@@ -1,5 +1,6 @@
 package dev.pakh.logic.handlers.fishHp;
 
+import dev.pakh.logic.ports.FishingStateListener;
 import dev.pakh.models.capture.CaptureProcessor;
 import dev.pakh.models.game.GameLayout;
 import dev.pakh.models.geometry.HorizontalRange;
@@ -11,7 +12,7 @@ import java.awt.image.BufferedImage;
 public class FishHpHandler extends CaptureProcessor {
     private final int BAR_TOP_BORDER_OFFSET = 215;
     private final int BAR_LEFT_BORDER_OFFSET = 112;
-    private final int PUMPING_THRESHOLD_MS = 900;
+    private final int PUMPING_THRESHOLD_MS = 1100;
     private final GameLayout gameLayout;
     private final HorizontalRange barRange;
 
@@ -19,9 +20,10 @@ public class FishHpHandler extends CaptureProcessor {
     private long lastHpTimestamp;
     private boolean skipNextComparison = true;
 
-    public FishHpHandler(GameLayout gameLayout) {
+    public FishHpHandler(GameLayout gameLayout, FishingStateListener fishingStateListener) {
         this.gameLayout = gameLayout;
         this.barRange = getBarRange();
+        fishingStateListener.onFishing();
     }
 
     @Override
